@@ -14,7 +14,7 @@ export default class ItemCtrl extends BaseCtrl {
     }
 
    getChildItems = (req, res) => {
-     if (req.params.id == null) {
+     if (req.params.parentid == null) {
       this.model.find({parentItem: null}, (err, items) => {
         if (err) { return console.error(err); }
         res.status(200).json(items);
