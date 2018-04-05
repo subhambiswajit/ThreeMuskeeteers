@@ -24,6 +24,7 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 mongoose.Promise = global.Promise;
+console.log(mongodbURI);
 const mongodb = mongoose.connect(mongodbURI);
 
 mongodb
