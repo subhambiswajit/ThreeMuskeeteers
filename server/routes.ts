@@ -5,6 +5,7 @@ import UserCtrl from './controllers/user';
 import Cat from './models/cat';
 import User from './models/user';
 import ItemCtrl from './controllers/item';
+import CustomFieldCtrl from './controllers/customfield';
 
 export default function setRoutes(app) {
 
@@ -13,9 +14,11 @@ export default function setRoutes(app) {
   const catCtrl = new CatCtrl();
   const userCtrl = new UserCtrl();
   const itemCtrl = new ItemCtrl();
+  const customFieldCtrl = new CustomFieldCtrl();
 
   // Cats
   router.route('/Items').get(itemCtrl.getAll);
+  router.route('/customfields').get(customFieldCtrl.getAll);
   router.route('/cats/count').get(catCtrl.count);
   router.route('/cat').post(catCtrl.insert);
   router.route('/cat/:id').get(catCtrl.get);
