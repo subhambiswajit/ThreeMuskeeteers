@@ -1,7 +1,6 @@
 import * as mongoose from 'mongoose';
 
 const itemSchema = new mongoose.Schema({
-  _id: String,
   parentItem: String,
   name: String,
   desc: String,

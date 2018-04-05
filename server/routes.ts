@@ -16,9 +16,14 @@ export default function setRoutes(app) {
   const itemCtrl = new ItemCtrl();
   const customFieldCtrl = new CustomFieldCtrl();
 
-  // Cats
   router.route('/Items').get(itemCtrl.getAll);
+  router.route('/Item/:id').get(itemCtrl.get);
+  router.route('/ChildItems/:parentid').get(itemCtrl.getChildItems);
+  router.route('/ChildItems').get(itemCtrl.getChildItems);
+  router.route('/ItemSearch/:text').get(itemCtrl.search);
   router.route('/customfields').get(customFieldCtrl.getAll);
+
+
   router.route('/cats/count').get(catCtrl.count);
   router.route('/cat').post(catCtrl.insert);
   router.route('/cat/:id').get(catCtrl.get);
