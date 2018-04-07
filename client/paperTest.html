@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="paper-full.js"></script>
+<script type="text/javascript">
+	paper.install(window);
+	// Keep global references to both tools, so the HTML
+	// links below can access them.
+	var tool1, tool2;
+
+	window.onload = function() {
+		paper.setup('myCanvas');
+
+		// Create two drawing tools.
+		// tool1 will draw straight lines,
+		// tool2 will draw clouds.
+
+		// Both share the mouseDown event:
+		var path;
+			path = new Path();
+
+            // Use the arcTo command to draw cloudy lines
+            //var rect = new Path.Rectangle(event.point,)
+            var circle = new Path.Circle(new paper.Point(80, 50), 35);
+            var group = new Group();
+
+            var tile1 = addTile(100,30, 'kanagaraj');
+            var tile2 = addTile(140,70, 'subham');
+            var tile3 = addTile(40,110, 'iswarya');
+            var tile5 = addTile(100,30, 'kanagaraj');
+            var tile6 = addTile(140,70, 'subham');
+            var tile7 = addTile(40,110, 'iswarya');
+            
+            var tile15 = addTile(100,30, 'kanagaraj');
+            var tile16 = addTile(140,70, 'subham');
+            var tile17 = addTile(40,110, 'iswarya');
+            
+            var tile25 = addTile(100,30, 'kanagaraj');
+            var tile26 = addTile(140,70, 'subham');
+            var tile27 = addTile(40,110, 'iswarya');
+            
+            var tile4 = addTile(180,150, 'three muskeeteers');
+
+            var groupedTiles = connectTiles(tile4,tile1,tile2, tile3,tile5,tile6,tile7,tile15,tile16,tile17,tile25,tile26,tile27);
+            //groupedTiles.smooth();
+            console.log(tile1);
+           // group.scale(1.5);
+           path.onFrame = function(event) {
+           // Every frame, rotate the path by 3 degrees:
+            //text.rotate(3);
+            //circle.moveBy(10,10);
+           }
+
+        
+			//path.arcTo(event.point);
+    }
+    
+    addTile = function(x,y, title) {
+            var text = new PointText(new Point(x, y));
+            text.fillColor = 'black';
+            text.content = title;
+            var rect =  new Path.Rectangle(text.bounds,6);
+            rect.scale(1.2,1.5);
+            rect.fillColor = 'red';
+            rect.blendMode = 'multiply';
+            var group = new Group();
+            group.addChild(text);
+            group.addChild(rect);
+            group.scale(1.5);
+            group.position = new paper.Point(x,y);
+            return group;
+          }
+
+    connectTiles = function(centerTile,...args) {
+        if(args.length > 0 && centerTile != null)
+        {
+            centerTile.position = view.center;
+            var group = new Group();
+            group.addChild(centerTile);
+            var parentCenter = centerTile.bounds.center;
+            positionChildren(centerTile, args);
+        for(var i=0;i<args.length;i++)
+        {
+           var childCenter = args[i].bounds.center;
+           var wire = addConnectingWire(parentCenter, childCenter);
+           group.addChild(wire);
+           group.addChild(args[i]);
+        }
+            return group;
+        }
+    }
+
+    positionChildren = function(centerTile,args){
+        var minDistX = 50;
+        var minDistY = 50;
+        var centerBound = centerTile.bounds;
+        var topCenterPoint = new paper.Point(centerBound.centerX,centerBound.top);
+        var bottomCenterPoint = new paper.Point(centerBound.centerX,centerBound.bottom);
+        var placedTiles = new Array();
+        for(var i=0;i<args.length;i++)
+        {
+            var tile = args[i];
+            var side = i % 4;
+            switch(side)
+            {
+                case 0: // top right
+                    positionTopRight(minDistX,minDistY, topCenterPoint, args[i], placedTiles);
+                    break;
+                case 1: // bottom right
+                    positionBottomRight(minDistX,minDistY, topCenterPoint, args[i], placedTiles);
+                    break;
+                case 2: // bottom left
+                    positionBottomLeft(minDistX,minDistY, topCenterPoint, args[i], placedTiles);
+                    break;
+                case 3: // top left
+                    positionTopLeft(minDistX,minDistY, topCenterPoint, args[i], placedTiles);
+                    break;
+            }
+            placedTiles.push(tile);
+        }
+    }
+
+    positionTopRight = function(minDistX, minDistY, centerPoint, tile, args) {
+        var pos = new paper.Point(centerPoint);
+        var temp = getRandomPosition(minDistX, minDistY);
+        pos.x = pos.x + temp.x;
+        pos.y = pos.y - temp.y; 
+        tile.position = pos;
+    }
+
+    positionBottomRight = function(minDistX, minDistY, centerPoint, tile, args) {
+        var pos = new paper.Point(centerPoint);
+        var temp = getRandomPosition(minDistX, minDistY);
+        pos.x = pos.x + temp.x;
+        pos.y = pos.y + temp.y; 
+        tile.position = pos;
+    }
+
+    positionBottomLeft = function(minDistX, minDistY, centerPoint, tile, args) {
+        var pos = new paper.Point(centerPoint);
+        var temp = getRandomPosition(minDistX, minDistY);
+        pos.x = pos.x - temp.x;
+        pos.y = pos.y - temp.y; 
+        tile.position = pos;
+    }
+
+    positionTopLeft = function(minDistX, minDistY, centerPoint, tile, args) {
+        var pos = new paper.Point(centerPoint);
+        var temp = getRandomPosition(minDistX, minDistY);
+        pos.x = pos.x - temp.x;
+        pos.y = pos.y - temp.y; 
+        tile.position = pos;
+    }
+
+    multiplyPoint = function(source, factor) {
+        source.x = source.x * factor.x * 2;
+        source.y = source.y * factor.y * 2;
+        return source;
+    }
+
+    getRandomPosition = function(minDistX, minDistY) {
+        var temp = new paper.Point(minDistX + 50, minDistY + 50)
+        var rand = paper.Point.random();
+        return multiplyPoint(temp, rand);
+    }
+
+    addConnectingWire = function(point1,point2){
+        var group = new Group();
+        var path = new Path(point1);
+           path.strokeColor = 'blue';
+           path.strokeWidth = 2;
+           path.blendMode = 'difference';
+           path.add(point2);
+        group.addChild(path);      
+     }
+</script>
+</head>
+<body>
+    <canvas id="myCanvas" resize width="1200" height="900" style="border:2;border: 1px solid black;"></canvas>
+</body>
+</html>
