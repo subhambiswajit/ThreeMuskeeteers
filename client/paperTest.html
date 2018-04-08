@@ -3,8 +3,10 @@
 <head>
 <script type="text/javascript" src="paper-full.js"></script>
 <script type="text/javascript">
+    
     paper.install(window);
     
+
     var RectFillColor = 'yellow';
     var RectStrokeColor = 'blue';
     var TextFillColor = 'black';
@@ -17,8 +19,17 @@
     var CenterTileStrokeColor = 'blue';
 
     var WireStrokeColor = 'green';
+
+    //Animation States
     var CollapseChildren = false;
     var ExpandChildren = false;
+    var MoveCenterTileToLeft = false;
+    var MoveSelectedTileToCenter = false;
+
+    //History Panel
+    var HistoryTiles = new Array();
+    var HistoryPanelLeftMargin = 20;
+    var HistoryPanelTopMargin = 20;
 
 	window.onload = function() {
 		paper.setup('myCanvas');
@@ -53,7 +64,7 @@
             
             var tile4 = addTile(180,150, 'three musketeers');
 
-            var groupedTiles = connectTiles(tile4,tile1,tile2, tile3,tile5,tile6,tile7,tile15,tile16,tile17,tile25,tile26,tile27);
+            var groupedTiles = connectTiles(tile4,[tile1,tile2, tile3,tile5,tile6,tile7,tile15,tile16,tile17,tile25,tile26,tile27]);
             //groupedTiles.smooth();
             console.log(tile1);
            // group.scale(1.5);
@@ -97,26 +108,60 @@
                 return false;
             }
             group.onMouseDown = function(event){
-                CollapseChildren = true;
+                if(!CollapseChildren && !ExpandChildren && !this.data.isParent)
+                {
+                    CollapseChildren = true;
+                    this.data.isNewlySelected = true;
+                    this.data.isChild = false;
+                    this.data.isParent = true;
+                }
                 //Trigger data apis
-                
             }
             group.onFrame = function(event){
+                    //Collapse on Selection
                     if(CollapseChildren)
                     {
-                        this.position.x = this.position.x - 10;
+                        //MoveCenterTileToLeft = true;
+                        if(this.data.isChild)
+                        {
+                            this.data.isCollapsing = true;
+                        }
+                        if(this.data.isCollapsing)
+                        {
+                            var moveX = this.data.parentTile.bounds.center.x - this.position.x;
+                            var moveY = this.data.parentTile.bounds.center.y - this.position.y;
+                            this.position.x = this.position.x + moveX / 10;
+                            this.position.y = this.position.y + moveY / 10; 
+                            //var wire = //addConnectingWire(this.data.parentTile.bounds.center, this.bounds.center);
+                            this.data.parentWire.removeSegments();
+                            this.data.parentWire.add(this.position);
+                            this.data.parentWire.lineTo(this.data.parentTile.bounds.center);
+                            this.data.count++;
+                        }
+                        if(this.data.count > 50)
+                        {
+                            CollapseChildren = false;
+                            MoveCenterTileToLeft = true;
+                            this.data.count = 0;
+                        }
                     }
+                    
+                    //Expand on load
                     if(ExpandChildren)
                     {
-                        if(this.data.parentWire !=null && this.data.isChild && this.data.targetPosition !=null && this.position != null && this.position.x != null)
+                        if(this.data.isChild)
                         {
-                        var moveX = this.data.targetPosition.x - this.position.x;
-                        var moveY = this.data.targetPosition.y - this.position.y;
-                        this.position.x = this.position.x + moveX / 10;
-                        this.position.y = this.position.y + moveY / 10; 
-                        //var wire = //addConnectingWire(this.data.parentTile.bounds.center, this.bounds.center);
-                        this.data.parentWire.lineTo(this.bounds.center);
-                        this.data.count++;
+                            this.data.isExpanding = true;
+                        }
+                        if(this.data.isExpanding)
+                        {
+                            var moveX = this.data.targetPosition.x - this.position.x;
+                            var moveY = this.data.targetPosition.y - this.position.y;
+                            this.position.x = this.position.x + moveX / 10;
+                            this.position.y = this.position.y + moveY / 10; 
+                            //var wire = //addConnectingWire(this.data.parentTile.bounds.center, this.bounds.center);
+                            this.data.parentWire.lineTo(this.bounds.center);
+                            this.data.count++;
                         }
                         if(this.data.count > 50)
                         {
@@ -124,23 +169,151 @@
                             this.data.count = 0;
                         }
                     }
+
+                    if(!ExpandChildren && !CollapseChildren && !MoveCenterTileToLeft && !MoveSelectedTileToCenter)
+                    {
+                        this.data.count = 0;
+                    }
+                    if(!ExpandChildren)
+                        this.data.isExpanding = false;
+
+                    //Removing the collapsed tiles;
+                    if(!CollapseChildren && this.data.isChild && this.data.isCollapsing)
+                        this.remove();
+
+                    if(MoveCenterTileToLeft)
+                    {
+                        if(this.data.isParent && !this.data.isMovingToHistory && !this.data.isNewlySelected )
+                        {
+                            this.data.isMovingToHistory = true;
+                            this.data.historyPanelPosition = getHistoryPanelPosition(this);
+                            //this.scale(0.75);
+                        }
+                        if(this.data.isParent && this.data.isMovingToHistory && !this.data.isNewlySelected )
+                        {
+                            var moveX = this.data.historyPanelPosition.x - this.position.x;
+                            var moveY = this.data.historyPanelPosition.y - this.position.y;
+                            this.position.x = this.position.x + moveX / 10;
+                            this.position.y = this.position.y + moveY / 10; 
+
+                            if(this.data.parentWire != null)
+                            {
+                                this.data.parentWire.removeSegments();
+                                this.data.parentWire.add(this.data.parentTile.bounds.center);
+                                this.data.parentWire.lineTo(this.bounds.center);
+                            }
+
+                            this.data.count++;
+
+                            if(this.data.count > 50)
+                            {
+                                console.log(this.position);
+                                MoveCenterTileToLeft = false;
+                                MoveSelectedTileToCenter = true;
+                                HistoryTiles.push(this); // adding to history tiles
+                                this.data.isMovingToHistory = false;
+                                this.data.count = 0;
+                                setHistoryTileProperties(this);
+                            }
+                        }
+                        if(this.data.isNewlySelected)
+                        {
+                            this.data.parentWire.removeSegments();
+                            this.data.parentWire.add(this.data.parentTile.bounds.center);
+                            this.data.parentWire.lineTo(this.bounds.center);
+                        }
+                    }
+                    if(MoveSelectedTileToCenter)
+                    {
+                        if(this.data.isNewlySelected && !this.data.isMovingToCenter)
+                        {
+                            this.data.targetPosition = view.center;
+                            this.data.isMovingToCenter = true;
+                        }
+
+                        if(this.data.isMovingToCenter)
+                        {
+                            this.data.parentWire.removeSegments();
+                            this.data.parentWire.add(this.data.parentTile.bounds.center);
+                            this.data.parentWire.lineTo(this.bounds.center);
+
+                            var moveX = this.data.targetPosition.x - this.position.x;
+                            var moveY = this.data.targetPosition.y - this.position.y;
+                            this.position.x = this.position.x + moveX / 10;
+                            this.position.y = this.position.y + moveY / 10; 
+                            this.data.count++;
+                            if(this.data.count > 50)
+                            {
+                                MoveSelectedTileToCenter = false;
+                                //setCenterTileProperties(this);
+                                connectTiles(this,getTestChildren());
+                            }
+                        }
+                    }
             }
             return group;
           }
     getDataObject = function(id, title, isChild, isParent, isSelectedHistory, isNewlySelected){
         return {id: id, title: title, isChild: isChild, 
-                isParent: isParent, isSelectedHistory: isSelectedHistory, isNewlySelected:isNewlySelected, targetPosition: null, parentTile: null, count:0, parentWire: null };
+                isParent: isParent, isSelectedHistory: isSelectedHistory, isNewlySelected:false, targetPosition: null, 
+                parentTile: null, count:0, parentWire: null,isExpanding: false, isCollapsing:false, isMovingToHistory:false,
+                historyPanelPosition:null, isMovingToCenter:false
+            };
     }
 
-    connectTiles = function(centerTile,...args) {
+    setCenterTileProperties = function(tile)
+    {
+        tile.position = view.center;
+        tile.scale(1.5);
+        tile.fillColor = CenterTileFillColor;
+        tile.strokeColor = CenterTileStrokeColor;
+        tile.data.isParent = true;
+        tile.data.isChild = false;
+        tile.data.isSelectedHistory = false;
+        tile.data.isNewlySelected = false;
+        tile.data.isExpanding = false;
+        tile.data.isCollapsing = false;
+        tile.data.isMovingToHistory = false;
+        tile.data.isMovingToCenter = false;
+        tile.data.count = 0;
+    }
+
+    setHistoryTileProperties = function(tile)
+    {
+        tile.scale(0.75);
+        tile.data.isParent = false;
+        tile.data.isSelectedHistory = false;
+        tile.data.isNewlySelected = false;
+        tile.data.isCollapsing = false;
+        tile.data.isExpanding = false;
+        tile.data.isMovingToHistory = false;
+        tile.data.isChild = false;
+        tile.data.isMovingToCenter = false;
+        tile.data.count = 0;
+    }
+
+    getTestChildren = function()
+    {
+        return  [addTile(100,30, 'kanagaraj'),
+                 addTile(140,70, 'subham'),
+                 addTile(40,110, 'iswarya'),
+                 addTile(100,30, 'kanagaraj'),
+                 addTile(140,70, 'subham'),
+                 addTile(40,110, 'iswarya')];
+    }
+
+    getHistoryPanelPosition = function(tile){
+        if(HistoryTiles.length == 0)
+            return new paper.Point(100, 30);
+        return new paper.Point(100 , 30 + ( HistoryTiles.length * tile.bounds.height));
+    }
+
+    connectTiles = function(centerTile,args) {
         if(args.length > 0 && centerTile != null)
         {
-            centerTile.position = view.center;
             var group = new Group();
-            centerTile.scale(1.5);
-            centerTile.fillColor = CenterTileFillColor;
-            centerTile.strokeColor = CenterTileStrokeColor;
             group.addChild(centerTile);
+            setCenterTileProperties(centerTile);
             var parentCenter = centerTile.bounds.center;
             
             //position all children witin parent
@@ -204,7 +377,7 @@
     positionTopRight = function(minDistX, minDistY, centerPoint, tile, args) {
         var pos = new paper.Point(centerPoint);
         var temp = getRandomPosition(minDistX, minDistY);
-        pos.x = pos.x + temp.x;
+        pos.x = view.center.x + temp.x;
         pos.y = pos.y - 50; 
         tile.data.targetPosition = pos;
         //tile.position = pos;
@@ -214,7 +387,7 @@
     positionBottomRight = function(minDistX, minDistY, centerPoint, tile, args) {
         var pos = new paper.Point(centerPoint);
         var temp = getRandomPosition(minDistX, minDistY);
-        pos.x = pos.x + temp.x;
+        pos.x = view.center.x + temp.x;
         pos.y = pos.y + 50; 
         tile.data.targetPosition = pos;
         //tile.position = pos;
@@ -224,7 +397,8 @@
     positionBottomLeft = function(minDistX, minDistY, centerPoint, tile, args) {
         var pos = new paper.Point(centerPoint);
         var temp = getRandomPosition(minDistX, minDistY);
-        pos.x = pos.x - temp.x;
+        var x = temp.x > tile.bounds.width ? temp.x : tile.bounds.width;
+        pos.x = view.center.x - x;
         pos.y = pos.y + 50; 
         tile.data.targetPosition = pos;
         //tile.position = pos;
@@ -234,7 +408,8 @@
     positionTopLeft = function(minDistX, minDistY, centerPoint, tile, args) {
         var pos = new paper.Point(centerPoint);
         var temp = getRandomPosition(minDistX, minDistY);
-        pos.x = pos.x - temp.x;
+        var x = temp.x > tile.bounds.width ? temp.x : tile.bounds.width;
+        pos.x = view.center.x - x ;
         pos.y = pos.y - 50; 
         tile.data.targetPosition = pos;
         //tile.position = pos;
