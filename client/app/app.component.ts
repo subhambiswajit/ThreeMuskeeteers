@@ -1,12 +1,17 @@
 import { AfterViewChecked, ChangeDetectorRef, Component } from '@angular/core';
 import { AuthService } from './services/auth.service';
-import {Paper} from 'paper';
+// import {Paper} from 'paper';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html'
+  templateUrl: './app.component.html',
+  "styles": [
+    "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+    "styles.css"
+  ]
 })
 export class AppComponent implements AfterViewChecked {
+
 
   constructor(public auth: AuthService,
               private changeDetector: ChangeDetectorRef) { }
