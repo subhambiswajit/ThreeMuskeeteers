@@ -307,7 +307,10 @@
             }
 
             connectTiles(tile,tiles)
+
         });
+
+        getData("ItemInfo/abcd", fillInfoPanel);
         
     }
 

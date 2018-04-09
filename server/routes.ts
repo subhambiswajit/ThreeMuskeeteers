@@ -18,6 +18,7 @@ export default function setRoutes(app) {
 
   router.route('/Items').get(itemCtrl.getAll);
   router.route('/Item/:id').get(itemCtrl.get);
+  router.route('/ItemInfo/:id').get(itemCtrl.getItemInfo);
   router.route('/ChildItems/:parentid').get(itemCtrl.getChildItems);
   router.route('/ChildItems').get(itemCtrl.getChildItems);
   router.route('/ItemSearch/:text').get(itemCtrl.search);
