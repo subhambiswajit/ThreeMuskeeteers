@@ -28,10 +28,11 @@ function fillInfoPanel(data) {
 	results += "<div class=\"row\"><center><b>Fields</b></center></div><hr>";
     // var results='<div class="row" style="margin-bottom:2px;height:40px;"><a href="foreign_profile/'+arr.searchdata[0].id+'">'+'<div class="col s10 l10 m10">'+arr.searchdata[0].name+'-'+arr.searchdata[0].username+'</div>'+'<div class="col s2 l2 m2">'+arr.searchdata[0].type+'</div>'+'</a></div>';
     for(inc=0;inc<len;inc++)
-		results += '<div class=\"row\"> <div class=\"card-panel\"><b>'+arr.customFields[inc].label+": "+arr.customFields[inc].value+'</b></div> </div>'
+		results += '<div class=\"row\"> <div class=\"card-panel light-blue lighten-5\"><b>'+arr.customFields[inc].label+":</b> "+arr.customFields[inc].value+'</div> </div>'
 	len=arr.objects.length;
 	results += "<div class=\"row\"><center><b>Objects</b></center></div><hr>";
 	for(inc=0;inc<len;inc++)
+		results += '<div class=\"row\"> <div class=\"card-panel light-blue lighten-5\"><b>'+arr.objects[inc].label+":</b>"+arr.objects[inc].type+'</div> </div>'
 		
     document.getElementById("details_area").innerHTML =results;
 }
