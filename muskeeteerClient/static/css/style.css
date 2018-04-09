@@ -5,3 +5,11 @@
 nav {
 	background: #795548;
 }
+
+#details_area {
+	border-left:1px solid black;
+}
+
+#content_space {
+	min-height: 100vh;
+}
