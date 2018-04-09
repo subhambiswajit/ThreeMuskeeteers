@@ -240,7 +240,8 @@
                             {
                                 MoveSelectedTileToCenter = false;
                                 //setCenterTileProperties(this);
-                                connectTiles(this,getTestChildren());
+                               // connectTiles(this,getTestChildren());
+                               loadChild(this);
                             }
                         }
                     }
@@ -288,12 +289,26 @@
 
     getTestChildren = function()
     {
+
         return  [addTile(100,30, 'kanagaraj'),
                  addTile(140,70, 'subham'),
                  addTile(40,110, 'iswarya'),
                  addTile(100,30, 'kanagaraj'),
                  addTile(140,70, 'subham'),
                  addTile(40,110, 'iswarya')];
+    }
+
+    loadChild = function(tile) {
+        getData("childItems", function (data) {
+            var tiles = new Array();
+            for(var i=0;i<data.length;i++)
+            {
+                tiles.push(addTile(0,0,data[i].name));
+            }
+
+            connectTiles(tile,tiles)
+        });
+        
     }
 
     getHistoryPanelPosition = function(tile){

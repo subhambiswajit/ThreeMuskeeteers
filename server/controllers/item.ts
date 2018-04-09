@@ -14,17 +14,34 @@ export default class ItemCtrl extends BaseCtrl {
     }
 
    getChildItems = (req, res) => {
-     if (req.params.parentid == null) {
-      this.model.find({parentItem: null}, (err, items) => {
-        if (err) { return console.error(err); }
-        res.status(200).json(items);
-      });
-     } else {
-     this.model.find({parentItem: req.params.parentid}, (err, items) => {
-       if (err) { return console.error(err); }
-       res.status(200).json(items);
-     });
+     var items = [{
+       _id:'001',
+       name: 'sample 1',
+       desc: 'Sample description'
+     },
+     {
+      _id:'002',
+      name: 'sample 2',
+      desc: 'Sample description'
+    },
+    {
+      _id:'003',
+      name: 'sample 3',
+      desc: 'Sample description'
     }
+    ]
+    res.status(200).json(items);
+    //  if (req.params.parentid == null) {
+    //   this.model.find({parentItem: null}, (err, items) => {
+    //     if (err) { return console.error(err); }
+    //     res.status(200).json(items);
+    //   });
+    //  } else {
+    //  this.model.find({parentItem: req.params.parentid}, (err, items) => {
+    //    if (err) { return console.error(err); }
+    //    res.status(200).json(items);
+    //  });
+    // }
    }
 }
 

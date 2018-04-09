@@ -1,15 +1,14 @@
-function getData(parameter) {
-	var url = 'localhost:3000/api/'+parameter;
+function getData(parameter, onSuccess) {
+	var url = 'http://localhost:3000/api/'+parameter;
 	$.ajax({
             type: 'GET',
               url:url,
               data:{},              
               success: function(data) {
-                alert('working');
                 console.log(data);
+                onSuccess(data);
+                //return(data);
 
-                return(data);
-                fillInfoPanel(data);
               }
             
         });
@@ -29,3 +28,4 @@ function fillInfoPanel(data) {
     results+='<div class="row" style="margin-bottom:0px;height:10px;">&nbsp;</div>';
     document.getElementById("panel1").innerHTML =results;
 }
+
