@@ -31,9 +31,8 @@ function fillInfoPanel(data) {
 		results += '<div class=\"row\"> <div class=\"light-blue lighten-5\"><b>'+arr.customFields[inc].label+":</b> "+arr.customFields[inc].value+'</div> </div>'
 	len=arr.objects.length;
 	results += "<div class=\"row\"><center><b>Objects</b></center></div><hr>";
-	results += '<div class=\"row\"> <div class=\"light-blue lighten-5\"><b>'+'Screenshot'+":</b>"+"<a id='screenshot'>screenshot.png</a>"+'</a> </div>'
-	for(inc=0;inc<len;inc++)
-		results += '<div class=\"row\"> <div class=\"light-blue lighten-5\"><b>'+arr.objects[inc].label+":</b>"+arr.objects[inc].type+'</div> </div>'
+	results += '<div class=\"row\"> <div class=\"light-blue lighten-5\"><b>'+'Screenshot'+":</b> "+"<a id='screenshot'>screenshot.png</a>"+'</a> </div>'
+	
 		
     document.getElementById("details_area").innerHTML =results;
 }
