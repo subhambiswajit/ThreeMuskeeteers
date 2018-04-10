@@ -19,6 +19,7 @@
     var ExpandChildren = false;
     var MoveCenterTileToLeft = false;
     var MoveSelectedTileToCenter = false;
+    var animationSpeed = 10;
 
     //History Panel
     var HistoryTiles = new Array();
@@ -65,21 +66,89 @@
 
     }
 
+    var childFillColor = '#ffca28';
+    var centerFillColor = '#00b8d4';
+    var historyFillColor = '#76ff03';
+    var textColor = 'black';
+
     setChildTileColors = function(tile){
         
-        setBaseColors = function(group){
+       var setBaseColors = function(group){
+            var text = group.children[0];
+            var rect = group.children[1];
+            text.fillColor =  textColor;
+            text.strokeColor = textColor;
+            rect.fillColor = childFillColor;
+            rect.strokeColor = '#4a148c';
+        }
+
+       var setOnEnter = function(group){
+            var text = group.children[0];
+            var rect = group.children[1];
+            rect.fillColor =   centerFillColor;
+            rect.strokeColor = '#4a148c';
+            text.fillColor = textColor;
+            text.strokeColor = textColor;
+        }
+
+        setBaseColors(tile);
+
+        tile.onMouseEnter = function(event) {
+           setOnEnter(this);
+        }
+
+        tile.onMouseLeave = function(event) {
+           setBaseColors(this);
+        }
+    }
+
+    setCenterTileColors = function(tile)
+    {
+       var setBaseColors = function(group){
+            var text = group.children[0];
+            var rect = group.children[1];
+            text.fillColor =textColor;
+            text.strokeColor = textColor;
+            rect.fillColor = centerFillColor;
+            rect.strokeColor = '#4a148c';
+        }
+
+       var setOnEnter = function(group){
+            var text = group.children[0];
+            var rect = group.children[1];
+            rect.fillColor = 'blue';
+            rect.strokeColor = 'black';
+            text.fillColor = textColor;
+            text.strokeColor = textColor;
+        }
+
+        setBaseColors(tile);
+
+        tile.onMouseEnter = function(event) {
+         //  setOnEnter(this);
+        }
+        
+        tile.onMouseLeave = function(event) {
+         //  setBaseColors(this);
+        }
+
+    }
+
+    setHistoryTileColors = function(tile)
+    {
+        var setBaseColors = function(group){
             var text = group.children[0];
             var rect = group.children[1];
             text.fillColor = 'black';
             text.strokeColor = 'black';
-            rect.fillColor = 'red';
+            rect.fillColor = historyFillColor;
             rect.strokeColor = 'black';
         }
 
-        setOnEnter = function(group){
+        var setOnEnter = function(group){
             var text = group.children[0];
             var rect = group.children[1];
-            rect.fillColor = 'blue';
+            rect.fillColor = centerFillColor;
             rect.strokeColor = 'black';
             text.fillColor = 'black';
             text.strokeColor = 'black';
@@ -96,14 +165,10 @@
         }
     }
 
-    setCenterTileColors = function(tile)
-    {
-
-    }
-
-    setHistoryTileColors = function(tile)
-    {
-
+    setWireColor = function(wire){
+        wire.strokeColor = 'grey';
+        wire.strokeWidth = 2;
+        wire.blendMode = 'difference';
     }
     
     addTile = function(x,y, title,id) {
@@ -146,8 +211,8 @@
                         {
                             var moveX = this.data.parentTile.bounds.center.x - this.position.x;
                             var moveY = this.data.parentTile.bounds.center.y - this.position.y;
-                            this.position.x = this.position.x + moveX / 10;
-                            this.position.y = this.position.y + moveY / 10; 
+                            this.position.x = this.position.x + moveX / animationSpeed;
+                            this.position.y = this.position.y + moveY / animationSpeed; 
                             //var wire = //addConnectingWire(this.data.parentTile.bounds.center, this.bounds.center);
                             this.data.parentWire.removeSegments();
                             this.data.parentWire.add(this.position);
@@ -173,8 +238,8 @@
                         {
                             var moveX = this.data.targetPosition.x - this.position.x;
                             var moveY = this.data.targetPosition.y - this.position.y;
-                            this.position.x = this.position.x + moveX / 10;
-                            this.position.y = this.position.y + moveY / 10; 
+                            this.position.x = this.position.x + moveX / animationSpeed;
+                            this.position.y = this.position.y + moveY / animationSpeed; 
                             //var wire = //addConnectingWire(this.data.parentTile.bounds.center, this.bounds.center);
                             this.data.parentWire.lineTo(this.bounds.center);
                             this.data.count++;
@@ -209,8 +274,8 @@
                         {
                             var moveX = this.data.historyPanelPosition.x - this.position.x;
                             var moveY = this.data.historyPanelPosition.y - this.position.y;
-                            this.position.x = this.position.x + moveX / 10;
-                            this.position.y = this.position.y + moveY / 10; 
+                            this.position.x = this.position.x + moveX / animationSpeed;
+                            this.position.y = this.position.y + moveY / animationSpeed; 
 
                             if(this.data.parentWire != null)
                             {
@@ -230,6 +295,7 @@
                                 this.data.isMovingToHistory = false;
                                 this.data.count = 0;
                                 setHistoryTileProperties(this);
+                                setHistoryTileColors(this)
                             }
                         }
                         if(this.data.isNewlySelected)
@@ -255,8 +321,8 @@
 
                             var moveX = this.data.targetPosition.x - this.position.x;
                             var moveY = this.data.targetPosition.y - this.position.y;
-                            this.position.x = this.position.x + moveX / 10;
-                            this.position.y = this.position.y + moveY / 10; 
+                            this.position.x = this.position.x + moveX / animationSpeed;
+                            this.position.y = this.position.y + moveY / animationSpeed; 
                             this.data.count++;
                             if(this.data.count > 50)
                             {
@@ -326,6 +392,25 @@
             path += "/" + tile.data.id;
         getData(path, function (data) {
             var tiles = new Array();
+            if(data.length == 0)
+            {
+                getData("ChildItems",function (data2) {
+                    var tiles2 = new Array();
+                    if(data.length == 0)
+                    {
+                        getData("ChildItems")
+                    }
+        
+                    for(var i=0;i<data2.length;i++)
+                    {
+                        tiles2.push(addTile(0,0,data2[i].name, data2[i]._id));
+                    }
+        
+                    connectTiles(tile,tiles2)
+        
+                });
+            }
+
             for(var i=0;i<data.length;i++)
             {
                 tiles.push(addTile(0,0,data[i].name, data[i]._id));
@@ -339,6 +424,8 @@
         
     }
 
+    populateChild = function(data){}
+
     getHistoryPanelPosition = function(tile){
         if(HistoryTiles.length == 0)
             return new paper.Point(100, 30);
@@ -351,6 +438,7 @@
             var group = new Group();
             group.addChild(centerTile);
             setCenterTileProperties(centerTile);
+            setCenterTileColors(centerTile);
             var parentCenter = centerTile.bounds.center;
             
             //position all children witin parent
@@ -466,9 +554,7 @@
     addConnectingWire = function(point1,point2){
         var group = new Group();
         var path = new Path(point1);
-           path.strokeColor = WireStrokeColor;
-           path.strokeWidth = 2;
-           path.blendMode = 'difference';
+           setWireColor(path);
            path.add(point2);
         group.addChild(path);    
         return path;  

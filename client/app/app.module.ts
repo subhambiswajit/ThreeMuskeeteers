@@ -1,6 +1,5 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { JwtModule } from '@auth0/angular-jwt';
-import { MaterializeModule } from "angular2-materialize";
 
 import { RoutingModule } from './routing.module';
 import { SharedModule } from './shared/shared.module';
@@ -38,7 +37,6 @@ export function tokenGetter() {
   imports: [
     RoutingModule,
     SharedModule,
-    MaterializeModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
