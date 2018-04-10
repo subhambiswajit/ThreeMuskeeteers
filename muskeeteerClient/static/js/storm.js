@@ -38,38 +38,72 @@
 
             // Use the arcTo command to draw cloudy lines
             //var rect = new Path.Rectangle(event.point,)
-            var circle = new Path.Circle(new paper.Point(80, 50), 35);
-            var group = new Group();
+          //  var circle = new Path.Circle(new paper.Point(80, 50), 35);
+          //  var group = new Group();
 
-            var tile1 = addTile(100,30, 'kanagaraj');
-            var tile2 = addTile(140,70, 'subham');
-            var tile3 = addTile(40,110, 'iswarya');
-            var tile5 = addTile(100,30, 'kanagaraj');
-            var tile6 = addTile(140,70, 'subham');
-            var tile7 = addTile(40,110, 'iswarya');
+            // var tile1 = addTile(100,30, 'kanagaraj');
+            // var tile2 = addTile(140,70, 'subham');
+            // var tile3 = addTile(40,110, 'iswarya');
+            // var tile5 = addTile(100,30, 'kanagaraj');
+            // var tile6 = addTile(140,70, 'subham');
+            // var tile7 = addTile(40,110, 'iswarya');
             
-            var tile15 = addTile(100,30, 'kanagaraj');
-            var tile16 = addTile(140,70, 'subham');
-            var tile17 = addTile(40,110, 'iswarya');
+            // var tile15 = addTile(100,30, 'kanagaraj');
+            // var tile16 = addTile(140,70, 'subham');
+            // var tile17 = addTile(40,110, 'iswarya');
             
-            var tile25 = addTile(100,30, 'kanagaraj');
-            var tile26 = addTile(140,70, 'subham');
-            var tile27 = addTile(40,110, 'iswarya');
+            // var tile25 = addTile(100,30, 'kanagaraj');
+            // var tile26 = addTile(140,70, 'subham');
+            // var tile27 = addTile(40,110, 'iswarya');
             
-            var tile4 = addTile(180,150, 'three musketeers');
+            // var tile4 = addTile(180,150, 'three musketeers');
 
-            var groupedTiles = connectTiles(tile4,[tile1,tile2, tile3,tile5,tile6,tile7,tile15,tile16,tile17,tile25,tile26,tile27]);
-            //groupedTiles.smooth();
-            console.log(tile1);
-           // group.scale(1.5);
-           path.onFrame = function(event) {
-           // Every frame, rotate the path by 3 degrees:
-            //text.rotate(3);
-            //circle.moveBy(10,10);
-           }
+            // var groupedTiles = connectTiles(tile4,[tile1,tile2, tile3,tile5,tile6,tile7,tile15,tile16,tile17,tile25,tile26,tile27]);
+          var mainTile = addTile(0,0,'New Gen Portal');
+          //setCenterTileProperties(mainTile);
+          loadChild(mainTile);
 
+    }
+
+    setChildTileColors = function(tile){
         
-			//path.arcTo(event.point);
+        setBaseColors = function(group){
+            var text = group.children[0];
+            var rect = group.children[1];
+            text.fillColor = 'black';
+            text.strokeColor = 'black';
+            rect.fillColor = 'red';
+            rect.strokeColor = 'black';
+        }
+
+        setOnEnter = function(group){
+            var text = group.children[0];
+            var rect = group.children[1];
+            rect.fillColor = 'blue';
+            rect.strokeColor = 'black';
+            text.fillColor = 'black';
+            text.strokeColor = 'black';
+        }
+
+        setBaseColors(tile);
+
+        tile.onMouseEnter = function(event) {
+           setOnEnter(this);
+        }
+        
+        tile.onMouseLeave = function(event) {
+           setBaseColors(this);
+        }
+    }
+
+    setCenterTileColors = function(tile)
+    {
+
+    }
+
+    setHistoryTileColors = function(tile)
+    {
+
     }
     
     addTile = function(x,y, title,id) {
@@ -88,19 +122,7 @@
             group.scale(1.5);
             group.position = new paper.Point(x,y);
             group.data = getDataObject(id, title, true, false, false,false);
-            group.onMouseEnter = function(event) {
-                rect.fillColor = RectFillColorOnFocus;
-                text.fillColor = TextFillColorOnFocus;
-                event.stopPropagation();
-                return false;
-            }
-            group.onMouseLeave = function(event) {
-                rect.fillColor = RectFillColor;
-                rect.strokeColor = RectStrokeColor;
-                text.fillColor = TextFillColor;
-                event.stopPropagation();
-                return false;
-            }
+      setChildTileColors(group);
             group.onMouseDown = function(event){
                 if(!CollapseChildren && !ExpandChildren && !this.data.isParent)
                 {
@@ -299,11 +321,14 @@
     }
 
     loadChild = function(tile) {
-        getData("childItems", function (data) {
+        var path = "childItems";
+        if(tile.data != null && tile.data.id != null)
+            path += "/" + tile.data.id;
+        getData(path, function (data) {
             var tiles = new Array();
             for(var i=0;i<data.length;i++)
             {
-                tiles.push(addTile(0,0,data[i].name));
+                tiles.push(addTile(0,0,data[i].name, data[i]._id));
             }
 
             connectTiles(tile,tiles)
