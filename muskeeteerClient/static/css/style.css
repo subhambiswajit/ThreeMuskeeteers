@@ -4,10 +4,9 @@
 
 nav {
 	background: #795548;
-}
-
-#details_area {
-	border-left:1px solid black;
+	-webkit-box-shadow: none !important;
+	-moz-box-shadow: none !important;
+	box-shadow: none !important;
 }
 
 #content_space {
@@ -19,4 +18,9 @@ nav {
 }
 .row {
 	margin-bottom:5px !important;
+}
+
+.modal {
+    max-height: 100%;
+    width: 73%;
 }

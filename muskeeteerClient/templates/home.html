@@ -11,6 +11,16 @@
   <link href="/static/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 </head>
 <body>
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat" style="float:right"><i class="material-icons">close</i> </a>
+    <div class="modal-content">
+      <h4 id="modal_header">Modal Header</h4>
+      <p id="modal_desc">A bunch of text</p>
+    </div>
+    
+  </div>
+          
  <!-- Dropdown Structure -->
 	<ul id="dropdown1" style="top:65px !important" class="dropdown-content">
 	  <li><a href="#!">one</a></li>
@@ -27,11 +37,10 @@
 	</nav>
 	<br>
 	<div class="row main">
-		<div class="col s9 card horizontal">
-			<canvas id="myCanvas" width="1142" height="600" style="border:2;border: 1px solid black;"></canvas>
+		<div class="col s9">
+			<canvas id="myCanvas" width="1142" height="600" ></canvas>
 		</div>
 		<div class="col s3" id="details_area" style="overflow-y:scroll">
-			details area
 		</div>
 	</div>
   <!--  Scripts-->
@@ -46,6 +55,14 @@
   	$(document).ready(function() {
   		$(".dropdown-trigger").dropdown();
   	})
+  	$(document).ready(function(){
+    	$('.modal').modal();
+
+  });
+
+  $("button").on("click", "#screenshot", function(){
+    fillmodal("landing", "<img src='/media/landing.png' style='width:100%'>");
+	});
   </script>
 
   </body>
