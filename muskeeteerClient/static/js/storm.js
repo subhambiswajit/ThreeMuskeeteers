@@ -64,6 +64,47 @@
           loadChild(mainTile);
 
     }
+
+    setChildTileColors = function(tile){
+        
+        setBaseColors = function(group){
+            var text = group.children[0];
+            var rect = group.children[1];
+            text.fillColor = 'black';
+            text.strokeColor = 'black';
+            rect.fillColor = 'red';
+            rect.strokeColor = 'black';
+        }
+
+        setOnEnter = function(group){
+            var text = group.children[0];
+            var rect = group.children[1];
+            rect.fillColor = 'blue';
+            rect.strokeColor = 'black';
+            text.fillColor = 'black';
+            text.strokeColor = 'black';
+        }
+
+        setBaseColors(tile);
+
+        tile.onMouseEnter = function(event) {
+           setOnEnter(this);
+        }
+        
+        tile.onMouseLeave = function(event) {
+           setBaseColors(this);
+        }
+    }
+
+    setCenterTileColors = function(tile)
+    {
+
+    }
+
+    setHistoryTileColors = function(tile)
+    {
+
+    }
     
     addTile = function(x,y, title,id) {
             var text = new PointText(new Point(x, y));
@@ -81,19 +122,7 @@
             group.scale(1.5);
             group.position = new paper.Point(x,y);
             group.data = getDataObject(id, title, true, false, false,false);
-            group.onMouseEnter = function(event) {
-                rect.fillColor = RectFillColorOnFocus;
-                text.fillColor = TextFillColorOnFocus;
-                event.stopPropagation();
-                return false;
-            }
-            group.onMouseLeave = function(event) {
-                rect.fillColor = RectFillColor;
-                rect.strokeColor = RectStrokeColor;
-                text.fillColor = TextFillColor;
-                event.stopPropagation();
-                return false;
-            }
+      setChildTileColors(group);
             group.onMouseDown = function(event){
                 if(!CollapseChildren && !ExpandChildren && !this.data.isParent)
                 {
