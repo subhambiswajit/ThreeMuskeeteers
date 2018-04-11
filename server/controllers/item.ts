@@ -14,38 +14,39 @@ export default class ItemCtrl extends BaseCtrl {
     }
 
     getItemInfo = (req,res) => {
-      var itemInfo = {
-        name: 'sample 1',
-        desc: 'Sample Description',
-        customFields:[
-          {
-            label:'Countries Supported',
-            value:'US, UK, NZ & AU',
-          },
-          {
-            label:'Languages Supported',
-            value:'ENG-US & ENG-AU',
-          },
-          {
-            label:'Sample SKUs',
-            value:'1234567, 3333333, 3323423',
-          },
+      this.get(req,res);
+      // var itemInfo = {
+      //   name: 'sample 1',
+      //   desc: 'Sample Description',
+      //   customFields:[
+      //     {
+      //       label:'Countries Supported',
+      //       value:'US, UK, NZ & AU',
+      //     },
+      //     {
+      //       label:'Languages Supported',
+      //       value:'ENG-US & ENG-AU',
+      //     },
+      //     {
+      //       label:'Sample SKUs',
+      //       value:'1234567, 3333333, 3323423',
+      //     },
       
-        ],
-        objects:[
-        {
-          label:'Screenshot',
-          type:'jpg',
-          link:'http://some linkj'
-        },
-        {
-          label:'Document',
-          type:'pdf',
-          link:'http://some linkj'
-        },
-      ]
-      }
-      res.status(200).json(itemInfo);
+      //   ],
+      //   objects:[
+      //   {
+      //     label:'Screenshot',
+      //     type:'jpg',
+      //     link:'http://some linkj'
+      //   },
+      //   {
+      //     label:'Document',
+      //     type:'pdf',
+      //     link:'http://some linkj'
+      //   },
+      // ]
+      // }
+      // res.status(200).json(itemInfo);
     }
 
    getChildItems = (req, res) => {

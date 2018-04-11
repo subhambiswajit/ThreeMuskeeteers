@@ -66,9 +66,9 @@
 
     }
 
-    var childFillColor = '#ffca28';
-    var centerFillColor = '#00b8d4';
-    var historyFillColor = '#76ff03';
+    var childFillColor = '#FF9800';
+    var centerFillColor = '#00BCD4';
+    var historyFillColor = '#9C27B0';
     var textColor = 'black';
 
     setChildTileColors = function(tile){
@@ -206,6 +206,7 @@
                         if(this.data.isChild)
                         {
                             this.data.isCollapsing = true;
+                            this.opacity = 0.5;
                         }
                         if(this.data.isCollapsing)
                         {
@@ -214,9 +215,12 @@
                             this.position.x = this.position.x + moveX / animationSpeed;
                             this.position.y = this.position.y + moveY / animationSpeed; 
                             //var wire = //addConnectingWire(this.data.parentTile.bounds.center, this.bounds.center);
-                            this.data.parentWire.removeSegments();
-                            this.data.parentWire.add(this.position);
-                            this.data.parentWire.lineTo(this.data.parentTile.bounds.center);
+                            if(this.data.parentWire != null)
+                            {
+                                this.data.parentWire.removeSegments();
+                                this.data.parentWire.add(this.position);
+                                this.data.parentWire.lineTo(this.data.parentTile.bounds.center);
+                            }
                             this.data.count++;
                         }
                         if(this.data.count > 50)
@@ -241,7 +245,10 @@
                             this.position.x = this.position.x + moveX / animationSpeed;
                             this.position.y = this.position.y + moveY / animationSpeed; 
                             //var wire = //addConnectingWire(this.data.parentTile.bounds.center, this.bounds.center);
+                            if(this.data.parentWire != null)
+                            {
                             this.data.parentWire.lineTo(this.bounds.center);
+                            }
                             this.data.count++;
                         }
                         if(this.data.count > 50)
@@ -268,7 +275,7 @@
                         {
                             this.data.isMovingToHistory = true;
                             this.data.historyPanelPosition = getHistoryPanelPosition(this);
-                            //this.scale(0.75);
+                            this.scale(0.75);
                         }
                         if(this.data.isParent && this.data.isMovingToHistory && !this.data.isNewlySelected )
                         {
@@ -300,16 +307,19 @@
                         }
                         if(this.data.isNewlySelected)
                         {
-                            this.data.parentWire.removeSegments();
-                            this.data.parentWire.add(this.data.parentTile.bounds.center);
-                            this.data.parentWire.lineTo(this.bounds.center);
+                            if(this.data.parentWire != null)
+                            {
+                                this.data.parentWire.removeSegments();
+                                this.data.parentWire.add(this.data.parentTile.bounds.center);
+                                this.data.parentWire.lineTo(this.bounds.center);
+                            }
                         }
                     }
                     if(MoveSelectedTileToCenter)
                     {
                         if(this.data.isNewlySelected && !this.data.isMovingToCenter)
                         {
-                            this.data.targetPosition = view.center;
+                            this.data.targetPosition = getViewCenter();
                             this.data.isMovingToCenter = true;
                         }
 
@@ -346,7 +356,7 @@
 
     setCenterTileProperties = function(tile)
     {
-        tile.position = view.center;
+        tile.position = getViewCenter();
         tile.scale(1.5);
         tile.fillColor = CenterTileFillColor;
         tile.strokeColor = CenterTileStrokeColor;
@@ -363,7 +373,7 @@
 
     setHistoryTileProperties = function(tile)
     {
-        tile.scale(0.75);
+        //tile.scale(0.75);
         tile.data.isParent = false;
         tile.data.isSelectedHistory = false;
         tile.data.isNewlySelected = false;
@@ -420,8 +430,10 @@
 
         });
 
-        getData("ItemInfo/abcd", fillInfoPanel);
-        
+        if(tile.data.id != null)
+        {
+            getData("ItemInfo/" + tile.data.id, fillInfoPanel);
+        }
     }
 
     populateChild = function(data){}
@@ -500,9 +512,10 @@
     }
 
     positionTopRight = function(minDistX, minDistY, centerPoint, tile, args) {
+        
         var pos = new paper.Point(centerPoint);
         var temp = getRandomPosition(minDistX, minDistY);
-        pos.x = view.center.x + temp.x;
+        pos.x = getViewCenter().x+ 30 + temp.x;
         pos.y = pos.y - 50; 
         tile.data.targetPosition = pos;
         //tile.position = pos;
@@ -512,7 +525,7 @@
     positionBottomRight = function(minDistX, minDistY, centerPoint, tile, args) {
         var pos = new paper.Point(centerPoint);
         var temp = getRandomPosition(minDistX, minDistY);
-        pos.x = view.center.x + temp.x;
+        pos.x = getViewCenter().x + temp.x;
         pos.y = pos.y + 50; 
         tile.data.targetPosition = pos;
         //tile.position = pos;
@@ -523,7 +536,7 @@
         var pos = new paper.Point(centerPoint);
         var temp = getRandomPosition(minDistX, minDistY);
         var x = temp.x > tile.bounds.width ? temp.x : tile.bounds.width;
-        pos.x = view.center.x - x;
+        pos.x = getViewCenter().x - x;
         pos.y = pos.y + 50; 
         tile.data.targetPosition = pos;
         //tile.position = pos;
@@ -534,7 +547,7 @@
         var pos = new paper.Point(centerPoint);
         var temp = getRandomPosition(minDistX, minDistY);
         var x = temp.x > tile.bounds.width ? temp.x : tile.bounds.width;
-        pos.x = view.center.x - x ;
+        pos.x = getViewCenter().x - x ;
         pos.y = pos.y - 50; 
         tile.data.targetPosition = pos;
         //tile.position = pos;
@@ -558,4 +571,9 @@
            path.add(point2);
         group.addChild(path);    
         return path;  
+     }
+
+     getViewCenter = function()
+     {
+         return new paper.Point(view.center.x + 150, view.center.y);
      }
