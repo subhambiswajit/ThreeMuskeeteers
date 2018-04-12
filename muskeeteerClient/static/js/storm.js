@@ -327,9 +327,12 @@
 
                         if(this.data.isMovingToCenter)
                         {
-                            this.data.parentWire.removeSegments();
-                            this.data.parentWire.add(this.data.parentTile.bounds.center);
-                            this.data.parentWire.lineTo(this.bounds.center);
+                            if(this.data.parentWire != null)
+                            {
+                                this.data.parentWire.removeSegments();
+                                this.data.parentWire.add(this.data.parentTile.bounds.center);
+                                this.data.parentWire.lineTo(this.bounds.center);
+                            }
 
                             var moveX = this.data.targetPosition.x - this.position.x;
                             var moveY = this.data.targetPosition.y - this.position.y;
@@ -414,6 +417,9 @@
             var tiles = new Array();
             if(data.length == 0)
             {
+                console.log($('#chkCircular'));
+                if($('#chkCircular').prop('checked') == true)
+                {
                 getData("ChildItems",function (data2) {
                     var tiles2 = new Array();
                     if(data.length == 0)
@@ -429,6 +435,7 @@
                     connectTiles(tile,tiles2)
         
                 });
+            }
             }
 
             for(var i=0;i<data.length;i++)
