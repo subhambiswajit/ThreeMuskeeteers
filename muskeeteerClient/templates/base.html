@@ -29,14 +29,18 @@
           
  <!-- Dropdown Structure -->
 	<ul id="dropdown1" style="top:65px !important;width:120px !important" class="dropdown-content">
-	  <li><a href="{%url 'storm_view' %}">Storm View</a></li>
-	  <li><a href="{%url 'tree_view' %}">Tree View</a></li>
+	  <li><a href="{% url 'storm_view' %}">Storm View</a></li>
+	  <li><a href="{% url 'tree_view' %}">Tree View</a></li>
 	</ul>
+  <ul id="release_version_dropdown" style="top:65px !important;width:120px !important" class="dropdown-content">
+    <li><a href="{% url 'storm_view' %}">Version 5.8</a></li>
+    <li><a href="{% url 'tree_view' %}">Version 5.9</a></li>
+  </ul>
 	<nav>
 	  <div class="nav-wrapper">
 	    <a href="#!" class="brand-logo">&nbsp;&nbsp;infoSTORM - New Generation Portal (NGP)</a>
-	    <ul id="nav_buttons" class="right hide-on-med-and-down">
-	      <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">{%if storm %}Storm View {%else%} Tree View {%endif%}<i class="material-icons right">arrow_drop_down</i></a></li>
+	    <ul id="nav_buttons" class="hide-on-med-and-down">
+	      <li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><b>{%if storm %}Storm View {%else%} Tree View {%endif%}</b><i class="material-icons right">arrow_drop_down</i></a></li>
         {%if storm %}
           <li> <div class="switch">
               <label style="color:white">
@@ -48,6 +52,7 @@
             </div>
           </li>
         {%endif%}
+        <li><a class="dropdown-trigger" href="#!" data-target="release_version_dropdown"><b>Release Version</b><i class="material-icons right">arrow_drop_down</i></a></li>
 	    </ul>
 	  </div>
 	</nav>
