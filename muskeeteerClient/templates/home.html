@@ -1,69 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>The Three Muskeeteers</title>
 
-  <!-- CSS  -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="/static/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link href="/static/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-</head>
-<body>
-  <!-- Modal Structure -->
-  <div id="modal1" class="modal">
-      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat" style="float:right"><i class="material-icons">close</i> </a>
-    <div class="modal-content">
-      <h4 id="modal_header">Modal Header</h4>
-      <p id="modal_desc">A bunch of text</p>
+{% extends 'base.html' %}
+
+{%block extrajs %}
+
+{%endblock%}
+
+{%block extracss %}
+
+{%endblock%}
+
+{%block content %}
+  <div class="row main">
+    <div class="col s9">
+      <canvas id="myCanvas" width="1142" height="600" ></canvas>
     </div>
-    
+    <div class="col s3" id="details_area" style="overflow-y:scroll">
+    </div>
   </div>
-          
- <!-- Dropdown Structure -->
-	<ul id="dropdown1" style="top:65px !important" class="dropdown-content">
-	  <li><a href="#!">one</a></li>
-	  <li><a href="#!">two</a></li>
-	  <li><a href="#!">three</a></li>
-	</ul>
-	<nav>
-	  <div class="nav-wrapper">
-	    <a href="#!" class="brand-logo">&nbsp;&nbsp;infoSTORM - New Generation Portal (NGP)</a>
-	    <ul class="right hide-on-med-and-down">
-	      <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">Versions<i class="material-icons right">arrow_drop_down</i></a></li>
-	    </ul>
-	  </div>
-	</nav>
-	<br>
-	<div class="row main">
-		<div class="col s9">
-			<canvas id="myCanvas" width="1142" height="600" ></canvas>
-		</div>
-		<div class="col s3" id="details_area" style="overflow-y:scroll">
-		</div>
-	</div>
-  <!--  Scripts-->
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script src="/static/js/materialize.js"></script>
-  <script src="/static/js/init.js"></script>
-  <script src="/static/js/paper-full.js"></script>
-  <script type="text/javascript" src="/static/js/storm.js"></script>
-  <script type="text/javascript" src="/static/js/service_calls.js"></script>
-
-  <script>
-  	$(document).ready(function() {
-  		$(".dropdown-trigger").dropdown();
-  	})
-  	$(document).ready(function(){
-    	$('.modal').modal();
-
-  });
-
-  $("#details_area").on("click", "#screenshot", function(){
-    fillmodal("Landing Page", "<img src='/media/landing.png' style='width:100%'>");
-	});
-  </script>
-
-  </body>
-</html>
+{%endblock%}
