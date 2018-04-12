@@ -21,6 +21,13 @@
     var MoveSelectedTileToCenter = false;
     var animationSpeed = 10;
 
+    var ExpansionSpeed = 10;
+    var CollapseSpeed = 10;
+    var MoveToHistorySpeed = 10;
+    var MoveToCenterSpeed = 10;
+
+    var speedFactor = 5;
+
     //History Panel
     var HistoryTiles = new Array();
     var HistoryPanelLeftMargin = 20;
@@ -68,7 +75,7 @@
 
     var childFillColor = '#FF9800';
     var centerFillColor = '#00BCD4';
-    var historyFillColor = '#9C27B0';
+    var historyFillColor = centerFillColor;//'#9C27B0';
     var textColor = 'black';
 
     setChildTileColors = function(tile){
@@ -212,8 +219,8 @@
                         {
                             var moveX = this.data.parentTile.bounds.center.x - this.position.x;
                             var moveY = this.data.parentTile.bounds.center.y - this.position.y;
-                            this.position.x = this.position.x + moveX / animationSpeed;
-                            this.position.y = this.position.y + moveY / animationSpeed; 
+                            this.position.x = this.position.x + moveX / CollapseSpeed;
+                            this.position.y = this.position.y + moveY / CollapseSpeed; 
                             //var wire = //addConnectingWire(this.data.parentTile.bounds.center, this.bounds.center);
                             if(this.data.parentWire != null)
                             {
@@ -223,7 +230,7 @@
                             }
                             this.data.count++;
                         }
-                        if(this.data.count > 50)
+                        if(this.data.count > CollapseSpeed * speedFactor)
                         {
                             CollapseChildren = false;
                             MoveCenterTileToLeft = true;
@@ -242,8 +249,8 @@
                         {
                             var moveX = this.data.targetPosition.x - this.position.x;
                             var moveY = this.data.targetPosition.y - this.position.y;
-                            this.position.x = this.position.x + moveX / animationSpeed;
-                            this.position.y = this.position.y + moveY / animationSpeed; 
+                            this.position.x = this.position.x + moveX / ExpansionSpeed;
+                            this.position.y = this.position.y + moveY / ExpansionSpeed; 
                             //var wire = //addConnectingWire(this.data.parentTile.bounds.center, this.bounds.center);
                             if(this.data.parentWire != null)
                             {
@@ -251,7 +258,7 @@
                             }
                             this.data.count++;
                         }
-                        if(this.data.count > 50)
+                        if(this.data.count > ExpansionSpeed * speedFactor)
                         {
                             ExpandChildren = false;
                             this.data.count = 0;
@@ -281,8 +288,8 @@
                         {
                             var moveX = this.data.historyPanelPosition.x - this.position.x;
                             var moveY = this.data.historyPanelPosition.y - this.position.y;
-                            this.position.x = this.position.x + moveX / animationSpeed;
-                            this.position.y = this.position.y + moveY / animationSpeed; 
+                            this.position.x = this.position.x + moveX / MoveToHistorySpeed;
+                            this.position.y = this.position.y + moveY / MoveToHistorySpeed; 
 
                             if(this.data.parentWire != null)
                             {
@@ -293,7 +300,7 @@
 
                             this.data.count++;
 
-                            if(this.data.count > 50)
+                            if(this.data.count > MoveToHistorySpeed * speedFactor)
                             {
                                 console.log(this.position);
                                 MoveCenterTileToLeft = false;
@@ -331,10 +338,10 @@
 
                             var moveX = this.data.targetPosition.x - this.position.x;
                             var moveY = this.data.targetPosition.y - this.position.y;
-                            this.position.x = this.position.x + moveX / animationSpeed;
-                            this.position.y = this.position.y + moveY / animationSpeed; 
+                            this.position.x = this.position.x + moveX / MoveToCenterSpeed;
+                            this.position.y = this.position.y + moveY / MoveToCenterSpeed; 
                             this.data.count++;
-                            if(this.data.count > 50)
+                            if(this.data.count > MoveToCenterSpeed * speedFactor)
                             {
                                 MoveSelectedTileToCenter = false;
                                 //setCenterTileProperties(this);
@@ -512,7 +519,7 @@
     }
 
     positionTopRight = function(minDistX, minDistY, centerPoint, tile, args) {
-        
+
         var pos = new paper.Point(centerPoint);
         var temp = getRandomPosition(minDistX, minDistY);
         pos.x = getViewCenter().x+ 30 + temp.x;
