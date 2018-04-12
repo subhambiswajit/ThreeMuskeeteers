@@ -32,6 +32,7 @@
     var HistoryTiles = new Array();
     var HistoryPanelLeftMargin = 20;
     var HistoryPanelTopMargin = 20;
+    var IsHistoryTileSelected = false;
 
 	window.onload = function() {
 		paper.setup('myCanvas');
@@ -44,29 +45,6 @@
 		var path;
 			path = new Path();
 
-            // Use the arcTo command to draw cloudy lines
-            //var rect = new Path.Rectangle(event.point,)
-          //  var circle = new Path.Circle(new paper.Point(80, 50), 35);
-          //  var group = new Group();
-
-            // var tile1 = addTile(100,30, 'kanagaraj');
-            // var tile2 = addTile(140,70, 'subham');
-            // var tile3 = addTile(40,110, 'iswarya');
-            // var tile5 = addTile(100,30, 'kanagaraj');
-            // var tile6 = addTile(140,70, 'subham');
-            // var tile7 = addTile(40,110, 'iswarya');
-            
-            // var tile15 = addTile(100,30, 'kanagaraj');
-            // var tile16 = addTile(140,70, 'subham');
-            // var tile17 = addTile(40,110, 'iswarya');
-            
-            // var tile25 = addTile(100,30, 'kanagaraj');
-            // var tile26 = addTile(140,70, 'subham');
-            // var tile27 = addTile(40,110, 'iswarya');
-            
-            // var tile4 = addTile(180,150, 'three musketeers');
-
-            // var groupedTiles = connectTiles(tile4,[tile1,tile2, tile3,tile5,tile6,tile7,tile15,tile16,tile17,tile25,tile26,tile27]);
           var mainTile = addTile(0,0,'New Gen Portal');
           //setCenterTileProperties(mainTile);
           loadChild(mainTile);
@@ -202,6 +180,8 @@
                     this.data.isNewlySelected = true;
                     this.data.isChild = false;
                     this.data.isParent = true;
+                    if(this.data.isSelectedHistory)
+                        IsHistoryTileSelected = true;
                 }
                 //Trigger data apis
             }
@@ -274,8 +254,9 @@
 
                     //Removing the collapsed tiles;
                     if(!CollapseChildren && this.data.isChild && this.data.isCollapsing)
-                        this.remove();
-
+                    {
+                        removeTile(this);
+                    }
                     if(MoveCenterTileToLeft)
                     {
                         if(this.data.isParent && !this.data.isMovingToHistory && !this.data.isNewlySelected )
@@ -306,6 +287,7 @@
                                 MoveCenterTileToLeft = false;
                                 MoveSelectedTileToCenter = true;
                                 HistoryTiles.push(this); // adding to history tiles
+                                this.data.historyIndex = HistoryTiles.length - 1;
                                 this.data.isMovingToHistory = false;
                                 this.data.count = 0;
                                 setHistoryTileProperties(this);
@@ -328,6 +310,19 @@
                         {
                             this.data.targetPosition = getViewCenter();
                             this.data.isMovingToCenter = true;
+                            if(this.data.isSelectedHistory)
+                                {
+                                    var index = this.data.historyIndex;
+                                    for(var i=0;i<HistoryTiles.length;i++)
+                                    {
+                                        if(i > index)
+                                        {
+                                            removeTile(HistoryTiles[i]);
+                                            HistoryTiles[i] = null;
+                                        }
+                                    }
+                                    HistoryTiles = HistoryTiles.slice(0,index);
+                                }
                         }
 
                         if(this.data.isMovingToCenter)
@@ -357,8 +352,16 @@
         return {id: id, title: title, isChild: isChild, 
                 isParent: isParent, isSelectedHistory: isSelectedHistory, isNewlySelected:false, targetPosition: null, 
                 parentTile: null, count:0, parentWire: null,isExpanding: false, isCollapsing:false, isMovingToHistory:false,
-                historyPanelPosition:null, isMovingToCenter:false
+                historyPanelPosition:null, isMovingToCenter:false, historyIndex:null
             };
+    }
+
+    removeTile = function(tile){
+        if(tile.data != null && tile.data.parentWire != null)
+        {
+            tile.data.parentWire.remove();
+        }
+        tile.remove();
     }
 
     setCenterTileProperties = function(tile)
@@ -382,7 +385,7 @@
     {
         //tile.scale(0.75);
         tile.data.isParent = false;
-        tile.data.isSelectedHistory = false;
+        tile.data.isSelectedHistory = true;
         tile.data.isNewlySelected = false;
         tile.data.isCollapsing = false;
         tile.data.isExpanding = false;
