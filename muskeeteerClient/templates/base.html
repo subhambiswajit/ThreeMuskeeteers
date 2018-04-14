@@ -9,9 +9,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="/static/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link href="/static/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  {%block extrajs %}
 
-  {%endblock%}
   {%block extracss %}
 
   {%endblock%}
@@ -45,7 +43,7 @@
           <li> <div class="switch">
               <label style="color:white">
                 Circular Link - Off
-                <input type="checkbox" id='chkCircular'>
+                <input type="checkbox" id='chkCircular' checked="checked">
                 <span class="lever"></span>
                 On
               </label>
@@ -81,6 +79,8 @@
     fillmodal("Landing Page", "<img src='/media/landing.png' style='width:100%'>");
 	});
   </script>
+  {%block extrajs %}
 
+  {%endblock%}
   </body>
 </html>

@@ -24,6 +24,9 @@ export default function setRoutes(app) {
   router.route('/ItemSearch/:text').get(itemCtrl.search);
   router.route('/customfields').get(customFieldCtrl.getAll);
 
+  router.route('/FullTree').get(itemCtrl.getFullTree);
+  
+
 
   router.route('/cats/count').get(catCtrl.count);
   router.route('/cat').post(catCtrl.insert);

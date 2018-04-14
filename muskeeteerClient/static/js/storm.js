@@ -21,10 +21,10 @@
     var MoveSelectedTileToCenter = false;
     var animationSpeed = 10;
 
-    var ExpansionSpeed = 10;
-    var CollapseSpeed = 10;
-    var MoveToHistorySpeed = 10;
-    var MoveToCenterSpeed = 10;
+    var ExpansionSpeed = 8;
+    var CollapseSpeed = 8;
+    var MoveToHistorySpeed = 3;
+    var MoveToCenterSpeed = 3;
 
     var speedFactor = 5;
 
@@ -151,7 +151,7 @@
     }
 
     setWireColor = function(wire){
-        wire.strokeColor = 'grey';
+        wire.strokeColor = 'blue';
         wire.strokeWidth = 2;
         wire.blendMode = 'difference';
     }
@@ -159,6 +159,7 @@
     addTile = function(x,y, title,id) {
             var text = new PointText(new Point(x, y));
             text.fillColor = TextFillColor;
+
             text.content = title;
             var rect =  new Path.Rectangle(text.bounds,6);
             rect.scale(1.2,1.5);
