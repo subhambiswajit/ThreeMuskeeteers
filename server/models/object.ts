@@ -1,12 +1,14 @@
 import * as mongoose from 'mongoose';
 
-const customfieldSchema = new mongoose.Schema({
+const objectSchema = new mongoose.Schema({
   _id: String,
   parentId: String,
+  type: String,
   label: String,
+  fileName: String,
   value: String,
 });
 
-const CustomField = mongoose.model('customfield', customfieldSchema);
+const CustomField = mongoose.model('object', objectSchema);
 
 export default CustomField;

@@ -1,11 +1,14 @@
 import Item from '../models/item';
 import BaseCtrl from './base';
+import ObjectCtrl from './object';
+import CustomFieldCtrl from './customfield';
 
 
 export default class ItemCtrl extends BaseCtrl {
   model = Item;
 
-
+  customFieldCtrl = new CustomFieldCtrl();
+  objectCtrl = new ObjectCtrl();
 
     // searchbyField
     search = (req, res) => {
@@ -16,46 +19,26 @@ export default class ItemCtrl extends BaseCtrl {
       });
     }
 
-    getItemInfo = (req,res) => {
-      this.get(req,res);
-      // var itemInfo = {
-      //   name: 'sample 1',
-      //   desc: 'Sample Description',
-      //   customFields:[
-      //     {
-      //       label:'Countries Supported',
-      //       value:'US, UK, NZ & AU',
-      //     },
-      //     {
-      //       label:'Languages Supported',
-      //       value:'ENG-US & ENG-AU',
-      //     },
-      //     {
-      //       label:'Sample SKUs',
-      //       value:'1234567, 3333333, 3323423',
-      //     },
-      
-      //   ],
-      //   objects:[
-      //   {
-      //     label:'Screenshot',
-      //     type:'jpg',
-      //     link:'http://some linkj'
-      //   },
-      //   {
-      //     label:'Document',
-      //     type:'pdf',
-      //     link:'http://some linkj'
-      //   },
-      // ]
-      // }
-      // res.status(200).json(itemInfo);
+    getItemInfo =  async (req, res) => {
+      let itemInfo = {id: null, name: null, desc: null, customFields: null, files: null};
+      let item = await this.model.find({_id: req.params.id});
+      console.log(item);
+      if (item != null && item.length > 0) {
+        console.log('inside');
+        itemInfo.name = item[0].name;
+        itemInfo.desc = item[0].desc;
+        itemInfo.id = item[0]._id;
+        
+        itemInfo.customFields = await this.customFieldCtrl.getFieldsForParentId(item[0]._id);
+        itemInfo.files = await this.objectCtrl.getObjectsForParentId(item[0]._id);
+      }
+      res.status(200).json(itemInfo);
     }
 
    getFullTree = async (req, res) => {
      // let pro = new Promise()
      let result = await this.getChildren(null, '');
-     var root =  {name: 'NGP', id: 'root', children: result};
+     var root =  {name: 'OnBoard', id: 'root', children: result};
      res.status(200).json(root);
     }
 
@@ -63,9 +46,9 @@ export default class ItemCtrl extends BaseCtrl {
       let resultItems = null;
       if (id == null)
       {
-        console.log('sync');
+       // console.log('sync');
         let items = await this.model.find({parentItem: null});
-        console.log(items);
+       // console.log(items);
         resultItems = await this.populateChildren(items, root);
       } else {
          let items = await this.model.find({parentItem: id}, null);
@@ -77,11 +60,11 @@ export default class ItemCtrl extends BaseCtrl {
   };
 
     populateChildren = async (items, root) => {
-      console.log('populate');
+      //console.log('populate');
       let childItems = new Array();
       for (let i = 0; i < items.length; i++) {
             let child = {name: items[i].name, id: items[i]._id, children: null};
-            console.log(child);
+         //   console.log(child);
             if (!( root.indexOf(items[i].id) >= 0 )) {
               root += ',' + items[i]._id;
               let children = await this.getChildren(items[i].id, root);

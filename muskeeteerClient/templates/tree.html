@@ -26,7 +26,11 @@
 {%endblock%}
 
 {%block content %}
-<div id="body">
+  <div class="row main">
+    <div id="body" class="col s9">
+     </div>
+    <div class="col s3" id="details_area" style="overflow-y:scroll">
+    </div>
   </div>
 {%endblock%}
 
@@ -128,7 +132,12 @@
 	  var nodeEnter = node.enter().append("svg:g")
 		  .attr("class", "node")
 		  .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-		  .on("click", function(d) { toggle(d); update(d); });
+		  .on("click", function(d) { 
+			  toggle(d); 
+			  update(d);
+			console.log(d);
+			loadPanel(d.id);
+		});
 	
 	  nodeEnter.append("svg:circle")
 		  .attr("r", 20)
@@ -217,6 +226,13 @@
 		initTree(data);
 		});
 	//}, 1000); 
+	function loadPanel(id)
+	{
+		if (id != null)
+		{
+			getData("ItemInfo/" + id, fillInfoPanel);
+		}
+	}
 	
 	
 		</script>

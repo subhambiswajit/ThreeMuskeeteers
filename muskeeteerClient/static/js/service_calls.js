@@ -24,16 +24,29 @@ function fillInfoPanel(data) {
     var inc;
     var results = "";
     results += "<div class=\"row\"><center><h4><b>"+ arr.name +"</b><h4></center></div>";
-	results += "<div class=\"row\"><center><h6>"+ arr.desc +"<h6></center></div>";
-	results += "<div class=\"row\"><center><b>Fields</b></center></div>";
+    results += "<div class=\"row\"><center><h6>"+ arr.desc +"<h6></center></div>";
+    if(arr.customFields.length>0)
+    {
+        results += "<div class=\"row\"><center><b>Info Fields</b></center></div>";
+    }
     // var results='<div class="row" style="margin-bottom:2px;height:40px;"><a href="foreign_profile/'+arr.searchdata[0].id+'">'+'<div class="col s10 l10 m10">'+arr.searchdata[0].name+'-'+arr.searchdata[0].username+'</div>'+'<div class="col s2 l2 m2">'+arr.searchdata[0].type+'</div>'+'</a></div>';
-    
-        results += '<div class=\"row\"> <div class=\"light-blue lighten-5\"><b>Supported Countries:</b>US, UK & AU</div> </div>'
-        results += '<div class=\"row\"> <div class=\"light-blue lighten-5\"><b>Supported Languaes:</b>ENG-US, ENG-US</div> </div>'
-        results += '<div class=\"row\"> <div class=\"light-blue lighten-5\"><b>Sample SKUs:</b>1234567, 333333, 77777</div> </div>'
-	
-	results += "<div class=\"row\"><center><b>Objects</b></center></div>";
-	results += '<div class=\"row\"> <div class=\"light-blue lighten-5\"><b>'+'Screenshot'+":</b> "+"<a id='screenshot'>screenshot.png</a>"+'</a> </div>'
+    for(var i=0;i<arr.customFields.length;i++)
+    {
+        var serial = (i + 1) + ".&nbsp;";
+        results += '<div class=\"row\"> <div class=\"\">'+ serial  +'<b>' + arr.customFields[i].label + ':</b><span>&nbsp;' + arr.customFields[i].value + '</p></div> </div>'
+    }
+        //results += '<div class=\"row\"> <div class=\"light-blue lighten-5\"><b>Supported Languaes:</b>ENG-US, ENG-US</div> </div>'
+        //results += '<div class=\"row\"> <div class=\"light-blue lighten-5\"><b>Sample SKUs:</b>1234567, 333333, 77777</div> </div>'
+    if(arr.files.length > 0)
+    {
+        results += "<div class=\"row\"><center><b>Files</b></center></div>";
+    }
+    for(var i=0;i<arr.files.length;i++)
+    {
+        var serial = (i + 1) + ".&nbsp;";
+        var hidId = 'hidFile_' + i;
+        results += '<div class=\"row\"> <div class=\"\">' + serial + '<b>'+ arr.files[i].label + ':&nbsp;</b><a data-hidField=\"' + hidId + '\" id=\"file_' + i +'">' + arr.files[i].fileName + '</a>' + '<input id="' + hidId + '" type="hidden" value="'+ arr.files[i].value + '"/></div>';
+    }
 	
 		
     document.getElementById("details_area").innerHTML =results;
