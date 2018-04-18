@@ -2,6 +2,7 @@ import Item from '../models/item';
 import BaseCtrl from './base';
 import ObjectCtrl from './object';
 import CustomFieldCtrl from './customfield';
+import ParentChildMapCtrl from './parentchildmap';
 
 
 export default class ItemCtrl extends BaseCtrl {
@@ -9,6 +10,7 @@ export default class ItemCtrl extends BaseCtrl {
 
   customFieldCtrl = new CustomFieldCtrl();
   objectCtrl = new ObjectCtrl();
+  parentChildMapCtrl = new ParentChildMapCtrl();
 
     // searchbyField
     search = (req, res) => {
@@ -37,27 +39,20 @@ export default class ItemCtrl extends BaseCtrl {
 
    getFullTree = async (req, res) => {
      // let pro = new Promise()
-     let result = await this.getChildren(null, '');
-     var root =  {name: 'OnBoard', id: 'root', children: result};
+     // 5ad5424dc6e3447aacd12338	Estore Flow
+     // 5ad5424dc6e3447aacd1233a	Fast AR Flow
+
+     let result = await this.getChildren('5ad5424dc6e3447aacd1236c', '');
+     var root =  {name: 'Send Invite Flow', id: 'root', children: result};
      res.status(200).json(root);
     }
 
     getChildren = async (id: string, root: string) => {
       let resultItems = null;
-      if (id == null)
-      {
-       // console.log('sync');
-        let items = await this.model.find({parentItem: null});
-       // console.log(items);
-        resultItems = await this.populateChildren(items, root);
-      } else {
-         let items = await this.model.find({parentItem: id}, null);
-         let items2 = await this.model.find({tags : new RegExp( id, 'i' ) }, null);
-         let mergedItems = items.concat(items2);
-         resultItems = await this.populateChildren(mergedItems, root);
-    }
-    return resultItems;
-  };
+      let children =  await this.getParentChild(id);
+      resultItems = await this.populateChildren(children, root);
+      return resultItems;
+  }
 
     populateChildren = async (items, root) => {
       //console.log('populate');
@@ -86,21 +81,44 @@ export default class ItemCtrl extends BaseCtrl {
   //  }
 
 
-   getChildItems = (req, res) => {
-     if (req.params.parentid == null) {
-      this.model.find({parentItem: null}, (err, items) => {
-        if (err) { return console.error(err); }
-        res.status(200).json(items);
-      });
-     } else {
-     this.model.find({parentItem: req.params.parentid}, (err, items) => {
-       if (err) { return console.error(err); }
-       this.model.find({tags : new RegExp( req.params.parentid, 'i' ) }, (err2, itemsTagged) => {
-        if (err2) { return console.error(err2); }
-        res.status(200).json(items.concat(itemsTagged));
-      });
-     });
+  //  getChildItems = async (req, res) => {
+  //    if (req.params.parentid == null) {
+  //     this.model.find({parentItem: null}, (err, items) => {
+  //       if (err) { return console.error(err); }
+  //       res.status(200).json(items);
+  //     });
+  //    } else {
+  //    this.model.find({parentItem: req.params.parentid}, (err, items) => {
+  //      if (err) { return console.error(err); }
+  //      this.model.find({tags : new RegExp( req.params.parentid, 'i' ) }, (err2, itemsTagged) => {
+  //       if (err2) { return console.error(err2); }
+  //       res.status(200).json(items.concat(itemsTagged));
+  //     });
+  //    });
+  //   }
+  //  }
+
+   getChildItems = async (req, res) => {
+    if (req.params.parentid != null) {
+      let items = await this.getParentChild(req.params.parentid);
+      if (items.length === 0) {
+        items =  await this.getParentChild('5ad543c6c6e3447aacd12476');
+      }
+      res.status(200).json(items);
     }
-   }
-}
+  }
+
+    getParentChild = async (id: String) => {
+      let children =  await this.parentChildMapCtrl.getChildren(id);
+      let inQuery = {$in : null};
+      let childArray = new Array();
+      for (let i = 0; i < children.length; i++) {
+          childArray.push(children[i].childId);
+      }
+      inQuery.$in = childArray;
+      let items = await this.model.find({_id: inQuery});
+      return items;
+    }
+  }
+
 

@@ -19,6 +19,9 @@
     var ExpandChildren = false;
     var MoveCenterTileToLeft = false;
     var MoveSelectedTileToCenter = false;
+
+    var IsSingleChild = false;
+
     var animationSpeed = 10;
 
     var ExpansionSpeed = 8;
@@ -45,7 +48,8 @@
 		var path;
 			path = new Path();
 
-          var mainTile = addTile(0,0,'New Gen Portal');
+          var mainTile = addTile(0,0,'OnBoard Module');
+          mainTile.data.id = '5ad543c6c6e3447aacd12476';
           //setCenterTileProperties(mainTile);
           loadChild(mainTile);
 
@@ -159,10 +163,24 @@
     addTile = function(x,y, title,id) {
             var text = new PointText(new Point(x, y));
             text.fillColor = TextFillColor;
-
-            text.content = title;
-            var rect =  new Path.Rectangle(text.bounds,6);
-            rect.scale(1.2,1.5);
+            var titleMinimized = title
+            var fontSize = 10;
+            if(title.length > 15)
+            {
+                fontSize = (fontSize - (title.length/15)) //+ 1;
+            }
+            text.fontFamily = 'verdana';
+            text.fontSize = fontSize;
+            text.content = titleMinimized;
+           // var rect =  new Path.Rectangle(text.bounds,6);
+           var rect =  new Path.Rectangle(text.bounds,6);
+           var expand = 5;
+           rect.bounds.left -= expand;
+           rect.bounds.top -= expand;
+           rect.bounds.width += expand * 2;
+           rect.bounds.height += expand * 2;
+            
+            //rect.scale(1.2,1.5);
             rect.strokeColor = RectStrokeColor;
             rect.strokeWidth = 2;
             rect.fillColor = RectFillColor;
@@ -177,7 +195,12 @@
             group.onMouseDown = function(event){
                 if(!CollapseChildren && !ExpandChildren && !this.data.isParent)
                 {
-                    CollapseChildren = true;
+                    if(IsSingleChild){
+                        MoveCenterTileToLeft = true;
+                    }
+                    else{
+                        CollapseChildren = true;
+                    }
                     this.data.isNewlySelected = true;
                     this.data.isChild = false;
                     this.data.isParent = true;
@@ -264,7 +287,7 @@
                         {
                             this.data.isMovingToHistory = true;
                             this.data.historyPanelPosition = getHistoryPanelPosition(this);
-                            this.scale(0.75);
+                            this.scale(0.666);
                         }
                         if(this.data.isParent && this.data.isMovingToHistory && !this.data.isNewlySelected )
                         {
@@ -284,7 +307,6 @@
 
                             if(this.data.count > MoveToHistorySpeed * speedFactor)
                             {
-                                console.log(this.position);
                                 MoveCenterTileToLeft = false;
                                 MoveSelectedTileToCenter = true;
                                 HistoryTiles.push(this); // adding to history tiles
@@ -418,7 +440,6 @@
             var tiles = new Array();
             if(data.length == 0)
             {
-                console.log($('#chkCircular'));
                 if($('#chkCircular').prop('checked') == true)
                 {
                 getData("ChildItems",function (data2) {
@@ -437,6 +458,14 @@
         
                 });
             }
+            }
+
+            if(data.length == 1){
+                IsSingleChild = true;
+            }
+            else
+            {
+                IsSingleChild = false;
             }
 
             for(var i=0;i<data.length;i++)
@@ -459,7 +488,7 @@
     getHistoryPanelPosition = function(tile){
         if(HistoryTiles.length == 0)
             return new paper.Point(100, 30);
-        return new paper.Point(100 , 30 + ( HistoryTiles.length * tile.bounds.height));
+        return new paper.Point(100 , 30 + ( HistoryTiles.length * 40.5));
     }
 
     connectTiles = function(centerTile,args) {
@@ -543,7 +572,7 @@
     positionBottomRight = function(minDistX, minDistY, centerPoint, tile, args) {
         var pos = new paper.Point(centerPoint);
         var temp = getRandomPosition(minDistX, minDistY);
-        pos.x = getViewCenter().x + temp.x;
+        pos.x = getViewCenter().x + 30 + temp.x;
         pos.y = pos.y + 50; 
         tile.data.targetPosition = pos;
         //tile.position = pos;
