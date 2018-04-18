@@ -8,9 +8,12 @@ import * as path from 'path';
 import setRoutes from './routes';
 
 const app = express();
-dotenv.load({ path: '.env' });
-app.set('port', (process.env.PORT || 3000));
+const cors = require('cors');
 
+dotenv.load({ path: '.env' });
+
+app.set('port', (process.env.PORT || 3000));
+app.use(cors());
 app.use('/', express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
