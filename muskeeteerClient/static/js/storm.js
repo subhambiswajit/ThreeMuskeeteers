@@ -1,6 +1,8 @@
  paper.install(window);
     
 
+
+
     var RectFillColor = 'yellow';
     var RectStrokeColor = 'blue';
     var TextFillColor = 'black';
@@ -46,12 +48,29 @@
 
 		// Both share the mouseDown event:
 		var path;
-			path = new Path();
+            path = new Path();
+            
+            getData("/projectInfo", function(data) {
+                data1=JSON.stringify(data);
+                var arr=JSON.parse(data1);
+                //var spanTitle = $('#spnProjectTitle');
+                //spanTitle.text(arr[0].name);
+                var rootId = arr[0].rootNodeId;
 
-          var mainTile = addTile(0,0,'OnBoard Module');
-          mainTile.data.id = '5ad543c6c6e3447aacd12476';
-          //setCenterTileProperties(mainTile);
-          loadChild(mainTile);
+                getData("ItemInfo/" + rootId, function(data) {
+                    data1=JSON.stringify(data);
+                    var arr=JSON.parse(data1);
+                    var mainTile = addTile(0,0,arr.name);
+                    mainTile.data.id = rootId;//'5ad543c6c6e3447aacd12476';
+                     //setCenterTileProperties(mainTile);
+                    loadChild(mainTile);
+
+                });
+
+                
+              });
+
+          
 
     }
 
@@ -172,6 +191,7 @@
             text.fontFamily = 'verdana';
             text.fontSize = fontSize;
             text.content = titleMinimized;
+            //text.blendMode = 'multiply'
            // var rect =  new Path.Rectangle(text.bounds,6);
            var rect =  new Path.Rectangle(text.bounds,6);
            var expand = 5;
@@ -179,23 +199,26 @@
            rect.bounds.top -= expand;
            rect.bounds.width += expand * 2;
            rect.bounds.height += expand * 2;
-            
+
+          //  rect.sendToBack();
             //rect.scale(1.2,1.5);
             rect.strokeColor = RectStrokeColor;
             rect.strokeWidth = 2;
             rect.fillColor = RectFillColor;
             rect.blendMode = 'multiply';
+
             var group = new Group();
             group.addChild(text);
             group.addChild(rect);
             group.scale(1.5);
             group.position = new paper.Point(x,y);
             group.data = getDataObject(id, title, true, false, false,false);
+            project.activeLayer.addChild(group);
       setChildTileColors(group);
             group.onMouseDown = function(event){
                 if(!CollapseChildren && !ExpandChildren && !this.data.isParent)
                 {
-                    if(IsSingleChild){
+                    if(IsSingleChild && !this.data.isSelectedHistory){
                         MoveCenterTileToLeft = true;
                     }
                     else{
@@ -206,6 +229,7 @@
                     this.data.isParent = true;
                     if(this.data.isSelectedHistory)
                         IsHistoryTileSelected = true;
+                 //   rearrangeHistoryTiles();
                 }
                 //Trigger data apis
             }
@@ -259,6 +283,7 @@
                             if(this.data.parentWire != null)
                             {
                             this.data.parentWire.lineTo(this.bounds.center);
+                            this.data.parentWire.sendToBack();
                             }
                             this.data.count++;
                         }
@@ -285,9 +310,15 @@
                     {
                         if(this.data.isParent && !this.data.isMovingToHistory && !this.data.isNewlySelected )
                         {
+                            if(!IsHistoryTileSelected)
+                            {
+                                rearrangeHistoryTiles();
+                            }
                             this.data.isMovingToHistory = true;
                             this.data.historyPanelPosition = getHistoryPanelPosition(this);
                             this.scale(0.666);
+                            if(this.data.infoWire != null)
+                                this.data.infoWire.remove();
                         }
                         if(this.data.isParent && this.data.isMovingToHistory && !this.data.isNewlySelected )
                         {
@@ -365,6 +396,7 @@
                             if(this.data.count > MoveToCenterSpeed * speedFactor)
                             {
                                 MoveSelectedTileToCenter = false;
+                                IsHistoryTileSelected = false;
                                 //setCenterTileProperties(this);
                                // connectTiles(this,getTestChildren());
                                loadChild(this);
@@ -378,11 +410,33 @@
         return {id: id, title: title, isChild: isChild, 
                 isParent: isParent, isSelectedHistory: isSelectedHistory, isNewlySelected:false, targetPosition: null, 
                 parentTile: null, count:0, parentWire: null,isExpanding: false, isCollapsing:false, isMovingToHistory:false,
-                historyPanelPosition:null, isMovingToCenter:false, historyIndex:null
+                historyPanelPosition:null, isMovingToCenter:false, historyIndex:null, infoWire:null
             };
     }
 
-    removeTile = function(tile){
+    rearrangeHistoryTiles = function() {
+        var maxSize = 14;
+        
+        if(HistoryTiles.length > maxSize)
+        {
+            removeTile(HistoryTiles[0]);
+            HistoryTiles = HistoryTiles.slice(1,HistoryTiles.length);
+            for(var i=0;i<HistoryTiles.length;i++)
+            {
+                var tile = HistoryTiles[i];
+                tile.data.historyIndex--;
+                tile.position.y = tile.position.y - 40.5; 
+                if(i != 0 && tile.data.parentWire != null && tile.data.parentTile != null)
+                {
+                    tile.data.parentWire.removeSegments();
+                    tile.data.parentWire.add(tile.data.parentTile.bounds.center);
+                    tile.data.parentWire.lineTo(tile.bounds.center);
+                }
+            }
+        }
+    }
+
+    removeTile = function(tile) {
         if(tile.data != null && tile.data.parentWire != null)
         {
             tile.data.parentWire.remove();
@@ -435,7 +489,10 @@
     loadChild = function(tile) {
         var path = "childItems";
         if(tile.data != null && tile.data.id != null)
+        {
             path += "/" + tile.data.id;
+            updateTreeViewLink(tile.data.id);
+        }
         getData(path, function (data) {
             var tiles = new Array();
             if(data.length == 0)
@@ -474,6 +531,8 @@
             }
 
             connectTiles(tile,tiles)
+            var infoWire = addConnectingWire(tile.bounds.center, new paper.Point(tile.bounds.center.x + 800, tile.bounds.center.y - 200));
+            tile.data.infoWire = infoWire;
 
         });
 
@@ -481,6 +540,8 @@
         {
             getData("ItemInfo/" + tile.data.id, fillInfoPanel);
         }
+
+
     }
 
     populateChild = function(data){}
@@ -616,7 +677,10 @@
         var path = new Path(point1);
            setWireColor(path);
            path.add(point2);
-        group.addChild(path);    
+           path.sendToBack();
+           path.strokeWidth = 0.5;
+        group.addChild(path);
+
         return path;  
      }
 

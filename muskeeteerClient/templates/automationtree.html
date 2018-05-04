@@ -2,6 +2,7 @@
 {% extends 'base.html' %}
 
 {%block extrajs %}
+<script type="text/javascript" src="/static/js/autoflowtree.js"></script>
 <script type="text/javascript" src="/static/js/d3.js"></script>
 <script type="text/javascript" src="/static/js/d3-layout.js"></script>
 <script type="text/javascript" src="/static/js/service_calls.js"></script>
@@ -121,10 +122,10 @@
           //console.log(d);
           //createText(this,d.target);
           var color = '#008000';
-       //   if(d.target.passed == 0)
+          if(d.target.passed == 0)
             color = '#FF0000'
-      //    else if(d.target.passed< d.target.total)
-      //      color = '#FFA500'
+          else if(d.target.passed< d.target.total)
+            color = '#FFA500'
           $(this).attr('style','stroke:' + color);
         //  console.log(this.x);
         //  console.log(d);
@@ -179,16 +180,12 @@ parent.appendChild(newText);
   }
 
 setTimeout(() => {
-//  initTree(AutomationJsonObject);
+  initTree(AutomationJsonObject);
 }, 5000);
-var rootId = $.urlParam('id');
-console.log(rootId);
-var url = "/fulltree";
-if(rootId != null)
-	url = url + "/" + rootId;
-	getData(url, function (data) {
-		initTree(data);
-		});
+
+//	getData("/fulltree", function (data) {
+//		initTree(data);
+//		});
  // initTree(AutomationJsonObject);
   
   </script>

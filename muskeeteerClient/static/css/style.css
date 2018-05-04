@@ -31,3 +31,26 @@ nav {
 #nav_buttons{
 	margin-left: 47%;
 }
+
+#infoEdit:hover {
+	cursor: pointer;
+}
+
+#cfRowPlus:hover{
+	cursor: pointer;
+}
+
+#filesRowPlus:hover{
+	cursor: pointer;
+}
+.input_text{
+	border: 1px solid wheat !important;
+	margin-left: 10px !important;
+	padding-left: 10px !important;
+	padding-right: 10px !important;
+}
+
+#divCFRows{
+	overflow: auto;
+	max-height: 150px;
+}

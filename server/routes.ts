@@ -6,6 +6,7 @@ import Cat from './models/cat';
 import User from './models/user';
 import ItemCtrl from './controllers/item';
 import CustomFieldCtrl from './controllers/customfield';
+import ProjectCtrl from './controllers/project';
 
 export default function setRoutes(app) {
 
@@ -15,6 +16,7 @@ export default function setRoutes(app) {
   const userCtrl = new UserCtrl();
   const itemCtrl = new ItemCtrl();
   const customFieldCtrl = new CustomFieldCtrl();
+  const projectCtrl = new ProjectCtrl();
 
   router.route('/Items').get(itemCtrl.getAll);
   router.route('/Item/:id').get(itemCtrl.get);
@@ -25,8 +27,9 @@ export default function setRoutes(app) {
   router.route('/customfields').get(customFieldCtrl.getAll);
 
   router.route('/FullTree').get(itemCtrl.getFullTree);
+  router.route('/FullTree/:id').get(itemCtrl.getFullTree);
   
-
+  router.route('/projectInfo').get(projectCtrl.getProjectInfo);
 
   router.route('/cats/count').get(catCtrl.count);
   router.route('/cat').post(catCtrl.insert);

@@ -6,6 +6,7 @@
   <title>The Three Muskeeteers</title>
 
   <!-- CSS  -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.11/css/all.css" integrity="sha384-p2jx59pefphTFIpeqCcISO9MdVfIm4pNnsL08A6v5vaQc4owkQqxMV8kg4Yvhaw/" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="/static/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link href="/static/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
@@ -27,8 +28,8 @@
           
  <!-- Dropdown Structure -->
 	<ul id="dropdown1" style="top:65px !important;width:120px !important" class="dropdown-content">
-	  <li><a href="{% url 'storm_view' %}">Storm View</a></li>
-	  <li><a href="{% url 'tree_view' %}">Tree View</a></li>
+	  <li><a id="lnkStormView" href="{% url 'storm_view' %}">Storm View</a></li>
+	  <li><a id="lnkTreeView" href="{% url 'tree_view' %}">Tree View</a></li>
 	</ul>
   <ul id="release_version_dropdown" style="top:65px !important;width:120px !important" class="dropdown-content">
     <li><a href="{% url 'storm_view' %}">Version 5.8</a></li>
@@ -36,7 +37,7 @@
   </ul>
 	<nav>
 	  <div class="nav-wrapper">
-	    <a href="#!" class="brand-logo">&nbsp;&nbsp;infoStorm - NG(P)edia - OnBoard Module</a>
+	    <a href="#!" class="brand-logo" >&nbsp;&nbsp;infoStorm - NG(P)edia - <span id='spnProjectTitle'></span></a>
 	    <ul id="nav_buttons" class="hide-on-med-and-down">
 	      <li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><b>{%if storm %}Storm View {%else%} Tree View {%endif%}</b><i class="material-icons right">arrow_drop_down</i></a></li>
         {%if storm %}
@@ -63,8 +64,9 @@
   <script src="/static/js/materialize.js"></script>
   <script src="/static/js/init.js"></script>
   <script src="/static/js/paper-full.js"></script>
-  <script type="text/javascript" src="/static/js/storm.js"></script>
-  <script type="text/javascript" src="/static/js/service_calls.js"></script>
+  <!-- <script type="text/javascript" src="/static/js/storm.js"></script> -->
+  <!-- <script type="text/javascript" src="/static/js/autoflowtree.js"></script> -->
+  <script type="text/javascript" src="/static/js/service_calls.js"></script> 
 
   <script>
   	$(document).ready(function() {

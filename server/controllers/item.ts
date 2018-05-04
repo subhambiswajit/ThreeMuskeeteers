@@ -41,10 +41,17 @@ export default class ItemCtrl extends BaseCtrl {
      // let pro = new Promise()
      // 5ad5424dc6e3447aacd12338	Estore Flow
      // 5ad5424dc6e3447aacd1233a	Fast AR Flow
-
-     let result = await this.getChildren('5ad5424dc6e3447aacd1236c', '');
-     var root =  {name: 'Send Invite Flow', id: 'root', children: result};
-     res.status(200).json(root);
+     let rootId = '5ad5424dc6e3447aacd1233a';
+     if (req.params.id != null) {
+      rootId = req.params.id;
+     }
+     let result = await this.getChildren(rootId, '');
+     let item = await this.model.find({_id: rootId});
+     if (item != null && item.length > 0)
+     {
+      var root =  {name: item[0].name, id: item[0]._id + '_' + Math.random(), children: result};
+      res.status(200).json(root);
+     }
     }
 
     getChildren = async (id: string, root: string) => {
@@ -58,7 +65,7 @@ export default class ItemCtrl extends BaseCtrl {
       //console.log('populate');
       let childItems = new Array();
       for (let i = 0; i < items.length; i++) {
-            let child = {name: items[i].name, id: items[i]._id, children: null};
+            let child = {name: items[i].name, id: items[i]._id + '_' + Math.random(), children: null};
          //   console.log(child);
             if (!( root.indexOf(items[i].id) >= 0 )) {
               root += ',' + items[i]._id;
@@ -104,6 +111,7 @@ export default class ItemCtrl extends BaseCtrl {
       if (items.length === 0) {
         items =  await this.getParentChild('5ad543c6c6e3447aacd12476');
       }
+      console.log(items.length);
       res.status(200).json(items);
     }
   }
