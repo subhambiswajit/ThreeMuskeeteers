@@ -7,5 +7,7 @@ urlpatterns = patterns('',
     url(r'^storm$', views.storm_view, name='storm_view'),
     url(r'^tree$', views.tree_view, name='tree_view'),
     url(r'^automationtree$', views.automationtree_view, name='tree_view'),
+    url(r'^fileUploader$', views.fileuploader, name='file_upload'),
+    url(r'^fileDelete$', views.deleteFile, name='file_delete')
     # url(r'^blog/', include('blog.urls')),
 )

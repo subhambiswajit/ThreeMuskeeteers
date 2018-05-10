@@ -31,11 +31,15 @@ export default function setRoutes(app) {
   
   router.route('/projectInfo').get(projectCtrl.getProjectInfo);
 
+  router.route('/saveItemInfo').post(itemCtrl.saveItemInfo);
+
   router.route('/cats/count').get(catCtrl.count);
   router.route('/cat').post(catCtrl.insert);
   router.route('/cat/:id').get(catCtrl.get);
   router.route('/cat/:id').put(catCtrl.update);
   router.route('/cat/:id').delete(catCtrl.delete);
+
+
 
   // Users
   router.route('/login').post(userCtrl.login);

@@ -234,7 +234,8 @@
                 //Trigger data apis
             }
             group.onFrame = function(event){
-                    //Collapse on Selection
+                //console.log('test');
+                    //Collapse on Selecti;on
                     if(CollapseChildren)
                     {
                         //MoveCenterTileToLeft = true;
@@ -531,8 +532,8 @@
             }
 
             connectTiles(tile,tiles)
-            var infoWire = addConnectingWire(tile.bounds.center, new paper.Point(tile.bounds.center.x + 800, tile.bounds.center.y - 200));
-            tile.data.infoWire = infoWire;
+           // var infoWire = addConnectingWire(tile.bounds.center, new paper.Point(tile.bounds.center.x + 800, tile.bounds.center.y - 200));
+           // tile.data.infoWire = infoWire;
 
         });
 

@@ -21,14 +21,58 @@ export default class ItemCtrl extends BaseCtrl {
       });
     }
 
+    saveItemInfo = async(req, res) => {
+      //console.log(req.body);
+      let data = req.body;
+      let itemInfo = { name: data.name, desc: data.desc, tags: data.tags};
+      await this.updateItemInfo(data.id, itemInfo);
+      let cf = await this.getcffields(data);
+      let files = await this.getfiles(data);
+     // console.log(cf);
+      await this.customFieldCtrl.updateCustomFields(data.id, cf);
+      await this.objectCtrl.updateFiles(data.id, files);
+      res.status(200).json('ok');
+    }
+
+    updateItemInfo = async(id, data) => {
+      await this.model.findOneAndUpdate({ _id: id }, data);
+    }
+
+    getcffields = async(data) => {
+      let cfArray = new Array();
+      if ( data.cfCount > 0) {
+        for ( let i = 0; i < data.cfCount; i++) {
+          let label = data['customFields[' + i + '][label]'];
+          let value = data['customFields[' + i + '][value]'];
+          if ( label !== 'null' && value !== 'null') {
+          cfArray.push({ label: label, value: value});
+          }
+        }
+      }
+      return cfArray;
+    }
+
+    getfiles = async(data) => {
+      let fArray = new Array();
+      if ( data.fCount > 0) {
+        for ( let i = 0; i < data.fCount; i++) {
+          let label = data['files[' + i + '][label]'];
+          let value = data['files[' + i + '][name]'];
+          fArray.push({ label: label, fileName: value});
+        }
+      }
+      return fArray;
+    }
+
     getItemInfo =  async (req, res) => {
-      let itemInfo = {id: null, name: null, desc: null, customFields: null, files: null};
+      let itemInfo = {id: null, name: null, desc: null, tags: null, customFields: null, files: null};
       let item = await this.model.find({_id: req.params.id});
-      console.log(item);
+     // console.log(item);
       if (item != null && item.length > 0) {
-        console.log('inside');
+      //  console.log('inside');
         itemInfo.name = item[0].name;
         itemInfo.desc = item[0].desc;
+        itemInfo.tags = item[0].tags;
         itemInfo.id = item[0]._id;
         
         itemInfo.customFields = await this.customFieldCtrl.getFieldsForParentId(item[0]._id);
@@ -111,7 +155,7 @@ export default class ItemCtrl extends BaseCtrl {
       if (items.length === 0) {
         items =  await this.getParentChild('5ad543c6c6e3447aacd12476');
       }
-      console.log(items.length);
+     // console.log(items.length);
       res.status(200).json(items);
     }
   }

@@ -10,7 +10,7 @@
 
 <script>
 
-  var margin = {top: 20, right: 120, bottom: 20, left: 120},
+  var margin = {top: 20, right: 120, bottom: 20, left: 220},
       width = 4960 - margin.right - margin.left,
       height = 800 - margin.top - margin.bottom;
   
@@ -43,7 +43,7 @@
       }
     }
   
-    root.children.forEach(collapse);
+   // root.children.forEach(collapse);
     update(root);
   }
   
@@ -79,7 +79,7 @@
         .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
         .attr("dy", ".35em")
         .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
-        .text(function(d) { return d.name; })// + " (" + d.passed + "/" + d.total + ")"; })
+        .text(function(d) { return d.name + " (" + d.passed + "/" + d.total + ")"; })
         .style("fill-opacity", 1e-6);
   
     // Transition nodes to their new position.
@@ -88,7 +88,7 @@
         .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
   
     nodeUpdate.select("circle")
-        .attr("r", 4.5)
+        .attr("r", 8)
         .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
   
     nodeUpdate.select("text")
@@ -212,7 +212,7 @@ setTimeout(() => {
 .link {
   fill: none;
   stroke: #ccc;
-  stroke-width: 3.5px;
+  stroke-width: 1.5px;
 }
 
 
