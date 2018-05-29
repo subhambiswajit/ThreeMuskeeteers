@@ -5,6 +5,8 @@ from django.http import HttpResponse
 import os
 import pdb
 
+def login(request):
+	return render(request, 'login.html')
 def home(request):
 	return redirect('storm_view')
 

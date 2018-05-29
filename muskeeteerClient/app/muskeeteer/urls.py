@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     url(r'^tree$', views.tree_view, name='tree_view'),
     url(r'^automationtree$', views.automationtree_view, name='tree_view'),
     url(r'^fileUploader$', views.fileuploader, name='file_upload'),
-    url(r'^fileDelete$', views.deleteFile, name='file_delete')
+    url(r'^fileDelete$', views.deleteFile, name='file_delete'),
+    url(r'^login$', views.login, name='login')
     # url(r'^blog/', include('blog.urls')),
 )
