@@ -42,14 +42,13 @@
       <h4> InfoStorm </h4>
       <div class="section"></div>
 
-      <h5 class="indigo-text">Please, login into your account</h5>
+      <h5 class="indigo-text">Register</h5>
       <div class="section"></div>
 
       <div class="container">
         <div class="z-depth-1 grey lighten-4 row" style="display: inline-block; padding: 32px 48px 0px 48px; border: 1px solid #EEE;">
 
           <form class="col s12" method="post">
-             {% csrf_token %}
             <div class='row'>
               <div class='col s12'>
               </div>
@@ -67,15 +66,12 @@
                 <input class='validate' type='password' name='password' id='password' />
                 <label for='password'>Enter your password</label>
               </div>
-              <label style='float: right;'>
-								<a class='pink-text' href='#!'><b>Forgot Password?</b></a>
-							</label>
             </div>
 
             <br />
             <center>
               <div class='row'>
-                <button type='submit' name='btn_login' id="login_button" class='col s12 btn btn-large waves-effect indigo'>Login</button>
+                <button type='submit' name='btn_login' class='col s12 btn btn-large waves-effect indigo'>Create Account</button>
               </div>
             </center>
           </form>
@@ -90,42 +86,6 @@
 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
-  <script type="text/javascript" src="/static/js/service_calls.js"></script> 
-  <script>
-    function login(parameter, data) {
-      var url = apiBaseUrl + parameter;
-      $.ajax({
-                type: 'POST',
-                  url:url,
-                  data:data ,              
-                  success: function(data) {
-                    return data;
-                  }  
-            });
-      }
-      function authenticate(data) {
-        var url = pythonBaseUrl+'/login'
-        $.ajax({
-                type: 'POST',
-                  url:url,
-                  data:data ,              
-                  success: function(data) {
-                    return data;
-                  }  
-            });
-      }
-
-      $("#login_button").click(function(e){
-        e.preventDefault();
-        var email = $('#email').val();
-        var password = $('#password').val();
-        var data = { email: email, password: password};
-        var login_details = login("login", data);
-        var authentication_details = authenticate({email: login_details.email, password: login_details.password});
-        if (authentication_details == "true")
-          window.location = pythonBaseUrl+"/storm";
-      })
-  </script>
 </body>
 
 </html>

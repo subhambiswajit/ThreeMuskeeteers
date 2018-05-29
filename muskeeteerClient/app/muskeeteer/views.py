@@ -1,31 +1,53 @@
 from django.shortcuts import render, redirect
 from django.http import *
 from django.views.decorators.csrf import csrf_exempt
+from app.muskeeteer.decorators import user_is_authenticated
 from django.http import HttpResponse
 import os
 import pdb
+import requests
 
-def login(request):
+def landing(request):
 	return render(request, 'login.html')
+
+@csrf_exempt
+def login(request):
+	print 'working'
+	request.session['email'] = request.POST['email']
+	request.session['password'] = request.POST['password']
+	print request.session['email']
+	# print request.POST['password']
+	# print request.POST['email']
+	# response = requests.get('http://localhost:3000/api/6666', params= request.POST)
+	# print response.status_code
+	# print response
+	return HttpResponse("true")
+
+@user_is_authenticated
 def home(request):
 	return redirect('storm_view')
 
+@user_is_authenticated
 def storm_view(request):
 	render_data = {}
 	render_data['storm'] = True
 	# if request.GET['id'] != None:
 	# 	print '>>>>>>>>>>>' + request.GET['id']
+	print request.session['email']
 	return render(request,'home.html', render_data)
 
+@user_is_authenticated
 def tree_view(request):
 	# if request.GET['id'] != None:
 	# 	print '>>>>>>>>>>>' + request.GET['id']
 	return render(request, 'tree.html')
 
+@user_is_authenticated
 def automationtree_view(request):
 	return render(request, 'automationtree.html')
 # Create your views here.
 
+@user_is_authenticated
 @csrf_exempt
 def fileuploader(request):
 	render_data = {}
@@ -47,6 +69,7 @@ def fileuploader(request):
 				f.write(data)
 	return HttpResponse(request.FILES.get('fileContainer')) 
 
+@user_is_authenticated
 @csrf_exempt
 def deleteFile(request):
 	pdb.set_trace()

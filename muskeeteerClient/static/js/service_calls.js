@@ -17,7 +17,7 @@ function getData(parameter, onSuccess) {
             
         });
 
-}
+}   
 
 function postData(parameter, data, onSuccess) {
 	var url = apiBaseUrl + parameter;
