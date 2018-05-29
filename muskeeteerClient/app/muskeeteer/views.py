@@ -8,6 +8,7 @@ import pdb
 import requests
 
 def landing(request):
+	request.session.flush()
 	return render(request, 'login.html')
 
 @csrf_exempt
@@ -15,6 +16,7 @@ def login(request):
 	print 'working'
 	request.session['email'] = request.POST['email']
 	request.session['password'] = request.POST['password']
+	request.session['isAdmin'] = request.POST['isAdmin']
 	print request.session['email']
 	# print request.POST['password']
 	# print request.POST['email']
@@ -22,6 +24,15 @@ def login(request):
 	# print response.status_code
 	# print response
 	return HttpResponse("true")
+
+def getSession(request):
+	session_details = {}
+	if 'email' in request.session:
+		session_details.email = request.session.get['email']
+	if 'isAdmin' in request.session:
+		session_details.isAdmin = request.session.get['isAdmin']
+
+	return HttpResponse(session_details)
 
 @user_is_authenticated
 def home(request):
@@ -47,7 +58,7 @@ def automationtree_view(request):
 	return render(request, 'automationtree.html')
 # Create your views here.
 
-@user_is_authenticated
+
 @csrf_exempt
 def fileuploader(request):
 	render_data = {}

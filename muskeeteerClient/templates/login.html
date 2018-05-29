@@ -92,14 +92,14 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
   <script type="text/javascript" src="/static/js/service_calls.js"></script> 
   <script>
-    function login(parameter, data) {
+    function login(parameter, data, callback) {
       var url = apiBaseUrl + parameter;
       $.ajax({
                 type: 'POST',
                   url:url,
                   data:data ,              
                   success: function(data) {
-                    return data;
+                    callback(data);
                   }  
             });
       }
@@ -114,16 +114,27 @@
                   }  
             });
       }
+      function login_callback(data) {
+        if(data.isUser == true)
+        {
+        var email = $('#email').val();
+        var password = $('#password').val();
+        var authentication_details = authenticate({email: email, password: password});
+        if (authentication_details == "true")
+          window.location = pythonBaseUrl+"/storm";
+        }
+        else
+        {
+          alert("Invalid User");
+        }
+      }
 
       $("#login_button").click(function(e){
         e.preventDefault();
         var email = $('#email').val();
         var password = $('#password').val();
         var data = { email: email, password: password};
-        var login_details = login("login", data);
-        var authentication_details = authenticate({email: login_details.email, password: login_details.password});
-        if (authentication_details == "true")
-          window.location = pythonBaseUrl+"/storm";
+        login("login", data, login_callback(data));
       })
   </script>
 </body>
